@@ -69,3 +69,7 @@ Access the website through your preferred web browser by entering the following 
   - for login, create a UUID,username,password in the database.db
 2. /process : extracting the unseen comments
 3. /data: store the database.db of user info and csv files that users uploaded.
+
+
+## Note to self
+https://stackoverflow.com/questions/13716658/how-to-delete-all-commit-history-in-github 
