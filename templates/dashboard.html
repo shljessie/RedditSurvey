@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Dashboard</h1>
+
+    <h3>Explanations</h3>
+    <p>How to Download your file: XXX</p>
+    <p>Make sure your file has X,X,X</p>
+    <p>Upload your CSV comments file here.</p>
+
+    <br/>
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
+
+    {% if success %}
+        <p>{{ success }}</p>
+    {% endif %}
+
+    <form method="POST" action="/dashboard" enctype="multipart/form-data">
+        <label for="csv_file">Upload CSV File:</label>
+        <input type="file" id="csv_file" name="csv_file" accept=".csv">
+
+        <input type="submit" value="Upload">
+    </form>
+
+    <br/>
+    <form method="POST" action="/generate">
+        <button>Generate Survey</button>
+    </form>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <br/>
+
+    <p> Enter you your UUID and Username to login</p>
+
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
+
+    <form method="POST" action="/">
+        <label for="uuid">UUID:</label>
+        <input type="text" id="uuid" name="uuid" required>
+        <label for="uuid">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <input type="submit" value="Login">
+    </form>
+</body>
+</html>
