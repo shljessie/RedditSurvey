@@ -276,6 +276,7 @@ def genSurvey():
         saveResults(options,selected_option, username)  
 
     if click_counter == 11:
+        click_counter =0
         return render_template('done.html')
 
     return render_template('survey.html',option1=option1, option2=option2,click_counter = click_counter)
