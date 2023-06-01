@@ -6,8 +6,21 @@
 <body>
     <h1>Reddit Survey</h1>
 
-    <!-- refreshes each time to generate new survey -->
-    <div></div>
-    <div></div>
+    <form method="POST" action="/survey">
+        <button>Start Survey</button>
+
+        {% if option1 %}
+
+        <label for="option1">
+            <input type="checkbox" id="option1" name="option1" value="{{ option1 }}">{{ option1 }}
+        </label>
+        {% endif %}
+          <br>
+        {% if option2 %}
+        <label for="option2">
+            <input type="checkbox" id="option2" name="option2" value="{{ option2 }}">{{ option2 }}
+        </label>
+        {% endif %}
+    </form>
 </body>
 </html>

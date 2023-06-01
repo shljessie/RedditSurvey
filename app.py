@@ -13,6 +13,7 @@ import base64
 from urllib.parse import unquote
 from googleapiclient import discovery
 import json
+import random
 
 load_dotenv()
 
@@ -41,6 +42,14 @@ def create_user_folder(username):
     else:
         print("User folder already exists.")
 
+def create_user_survey_folder(username):
+    folder_path = os.path.join("data", username,"survey_response")
+
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+        print("User folder created successfully.")
+    else:
+        print("User folder already exists.")
 
 def find_most_recent_file(upload_folder):
     files = [f for f in os.listdir(upload_folder) if os.path.isfile(os.path.join(upload_folder, f))]
@@ -96,6 +105,20 @@ def process_comments(most_recent_file):
     unseen_comments = list((Counter(all_comments) - Counter(seen_comments)).elements())
 
     return all_comments, seen_comments, unseen_comments
+
+def generate_combinations(grouped):
+    combinations = [(False, False), (False, True), (True, False), (True, True)]
+
+    random_combinations = random.sample(combinations, k=2)
+
+    groups = []
+    for combination in random_combinations:
+        if combination in grouped.groups:
+            group = grouped.get_group(combination)
+            comments_column = group['comments']
+            random_comment = random.choice(comments_column.values)
+            groups.append(random_comment)
+    return groups[0], groups[1]
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -198,12 +221,33 @@ def generate_survey():
 
             file_path = os.path.join(folder_path, "labeled.csv")
             df.to_csv(file_path, index=False)
+           
 
-            return "Survey generated successfully."
+            return render_template('survey.html')
         else:
             return "No data available for survey generation."
 
     return render_template('survey.html')
+
+@app.route('/survey', methods=['GET', 'POST'])
+def genSurvey():
+    if request.method == 'POST':
+        username = session.get('username')
+        create_user_survey_folder(username)
+
+        #call survey final data
+        labeled_data = os.path.join("data", username, "labeled_comments","labeled.csv")
+        labeled_data = pd.read_csv(labeled_data)
+
+        grouped = labeled_data.groupby(['seen', 'toxicity'])
+        # print(grouped.get_group((False,False))['comments'])
+        option1, option2= generate_combinations(grouped)
+        print('option1', option1)
+        print('option2',  option2)
+        
+
+    return render_template('survey.html',option1=option1, option2=option2)
+    
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080)

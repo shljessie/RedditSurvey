@@ -1,5 +1,7 @@
 # generating the surveys
 
+
+
 # import the final with labeled toxcity labels
 # survey pairs
 # T+S, T+NS, NT+NS, NT+S
@@ -14,6 +16,6 @@ def randomGen():
 # on submiting answers
 # store user response in the database
 # create file for each date
-def storeResponse():
+
 
 #link back to survey website
