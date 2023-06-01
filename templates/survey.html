@@ -9,18 +9,22 @@
     <form method="POST" action="/survey">
         <button>Start Survey</button>
 
+        <p>Which one of these comments have you seen?</p>
         {% if option1 %}
-
         <label for="option1">
-            <input type="checkbox" id="option1" name="option1" value="{{ option1 }}">{{ option1 }}
+            <input type="radio" id="option1" name="option" value="{{ option1 }}">{{ option1 }}
         </label>
         {% endif %}
           <br>
         {% if option2 %}
         <label for="option2">
-            <input type="checkbox" id="option2" name="option2" value="{{ option2 }}">{{ option2 }}
+            <input type="radio" id="option2" name="option" value="{{ option2 }}">{{ option2 }}
         </label>
         {% endif %}
+
+    </form>
+    <form method="POST" action="/survey">
+        <button>Next</button>
     </form>
 </body>
 </html>
