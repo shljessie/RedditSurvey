@@ -123,7 +123,7 @@ def generate_combinations(grouped):
             groups.append(random_comment)
     return groups[0], groups[1]
 
-def saveResults(selected_option, username):
+def saveResults(options,selected_option, username):
     folder_path = os.path.join("data", username, "survey_response")
     current_date = date.today().strftime("%Y-%m-%d")
     file_path = os.path.join(folder_path, f"{current_date}.csv")
@@ -132,14 +132,15 @@ def saveResults(selected_option, username):
     if not os.path.isfile(file_path):
         # Create the file with the header
         with open(file_path, mode='w', newline='') as csvfile:
-            fieldnames = ['Selected Option']
+            fieldnames = ['Options','Selected Option']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
 
     # Append the selected option to the CSV file
     with open(file_path, mode='a', newline='') as csvfile:
-        fieldnames = ['Selected Option']
+        fieldnames = ['Options','Selected Option']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writerow({'Options': options})
         writer.writerow({'Selected Option': selected_option})
 
     print("Results saved successfully!")
@@ -267,14 +268,12 @@ def genSurvey():
         labeled_data = pd.read_csv(labeled_data)
 
         grouped = labeled_data.groupby(['seen', 'toxicity'])
-        # print(grouped.get_group((False,False))['comments'])
         option1, option2= generate_combinations(grouped)
-        print('option1', option1)
-        print('option2',  option2)
-        
-    if request.method == 'POST':
+
+        # Call your function to save the results        
+        options= [option1,option2]
         selected_option = request.form.get('option')
-        saveResults(selected_option, username)  # Call your function to save the results        
+        saveResults(options,selected_option, username)  
 
     if click_counter == 11:
         return render_template('done.html')
