@@ -7,6 +7,9 @@
     <h1>Reddit Survey</h1>
 
     <form method="POST" action="/survey">
+        {% if click_counter %}
+        <p>Question {{click_counter}}</p>
+        {% endif %}
         <button>Start Survey</button>
 
         <p>Which one of these comments have you seen?</p>
@@ -25,6 +28,7 @@
     </form>
     <form method="POST" action="/survey">
         <button>Next</button>
+        <input type="hidden" name="click_counter" value="{{ click_counter }}">
     </form>
 </body>
 </html>

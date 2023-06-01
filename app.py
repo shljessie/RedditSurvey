@@ -14,6 +14,9 @@ from urllib.parse import unquote
 from googleapiclient import discovery
 import json
 import random
+import csv
+from django.shortcuts import render
+from datetime import date
 
 load_dotenv()
 
@@ -119,6 +122,27 @@ def generate_combinations(grouped):
             random_comment = random.choice(comments_column.values)
             groups.append(random_comment)
     return groups[0], groups[1]
+
+def saveResults(selected_option, username):
+    folder_path = os.path.join("data", username, "survey_response")
+    current_date = date.today().strftime("%Y-%m-%d")
+    file_path = os.path.join(folder_path, f"{current_date}.csv")
+    
+    # Check if the CSV file already exists
+    if not os.path.isfile(file_path):
+        # Create the file with the header
+        with open(file_path, mode='w', newline='') as csvfile:
+            fieldnames = ['Selected Option']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+
+    # Append the selected option to the CSV file
+    with open(file_path, mode='a', newline='') as csvfile:
+        fieldnames = ['Selected Option']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writerow({'Selected Option': selected_option})
+
+    print("Results saved successfully!")
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -232,6 +256,9 @@ def generate_survey():
 @app.route('/survey', methods=['GET', 'POST'])
 def genSurvey():
     if request.method == 'POST':
+        click_counter = session.get('click_counter', 0)
+        click_counter += 1
+        session['click_counter'] = click_counter
         username = session.get('username')
         create_user_survey_folder(username)
 
@@ -245,8 +272,14 @@ def genSurvey():
         print('option1', option1)
         print('option2',  option2)
         
+    if request.method == 'POST':
+        selected_option = request.form.get('option')
+        saveResults(selected_option, username)  # Call your function to save the results        
 
-    return render_template('survey.html',option1=option1, option2=option2)
+    if click_counter == 11:
+        return render_template('done.html')
+
+    return render_template('survey.html',option1=option1, option2=option2,click_counter = click_counter)
     
 
 if __name__ == '__main__':
