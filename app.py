@@ -251,14 +251,17 @@ def generate_survey():
             return render_template('survey.html')
         else:
             return "No data available for survey generation."
-
     return render_template('survey.html')
 
 @app.route('/survey', methods=['GET', 'POST'])
 def genSurvey():
-    if request.method == 'POST':
-        click_counter = session.get('click_counter', 0)
-        click_counter += 1
+    # removing for now, perspective api limit reached
+    # if request.method == 'POST':
+        click_counter = session.get('click_counter')
+        if click_counter is None:
+            click_counter = 0
+        else:
+            click_counter += 1
         session['click_counter'] = click_counter
         username = session.get('username')
         create_user_survey_folder(username)
@@ -275,11 +278,11 @@ def genSurvey():
         selected_option = request.form.get('option')
         saveResults(options,selected_option, username)  
 
-    if click_counter == 11:
-        click_counter =0
-        return render_template('done.html')
+        if session['click_counter'] == 11:
+            session['click_counter'] = None
+            return render_template('done.html')
 
-    return render_template('survey.html',option1=option1, option2=option2,click_counter = click_counter)
+        return render_template('survey.html',option1=option1, option2=option2, click_counter = click_counter)
     
 
 if __name__ == '__main__':
