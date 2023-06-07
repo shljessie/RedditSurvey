@@ -2,6 +2,17 @@
 
 Survey generator website based on user viewed reddit comments.
 
+## TODO
+
+- add demographics
+- add hosting
+- add server
+- login auth checks
+- data auth checks
+- survey generation
+- perspective toxic score calculation
+
+
 #### Table of Contents
 - [Features](#features)
 - [Dependencies](#dependencies)

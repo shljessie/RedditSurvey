@@ -235,7 +235,18 @@ def generate_survey():
                 response = client.comments().analyze(body=analyze_request).execute()
                 toxicity_score = response['attributeScores']['TOXICITY']['summaryScore']['value']
                 toxicity_scores.append(toxicity_score)
-
+#  analyze_request = {
+#         "comment": { "text": reddit_comment },
+#         "requestedAttributes": {
+#             "TOXICITY": {},
+#             "SEVERE_TOXICITY": {},
+#             "IDENTITY_ATTACK": {},
+#             "PROFANITY": {},
+#             "THREAT": {},
+#             "SEXUALLY_EXPLICIT": {},
+#             "FLIRTATION": {}
+#             }
+#         }
             toxicity_labels = [score > 0.5 for score in toxicity_scores]
             df['toxicity'] = toxicity_labels
 
