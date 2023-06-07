@@ -4,13 +4,14 @@ Survey generator website based on user viewed reddit comments.
 
 ## TODO
 
-- add demographics
-- add hosting
-- add server
-- login auth checks
-- data auth checks
-- survey generation
-- perspective toxic score calculation
+- add demographics (thurs)
+- add hosting  (fri)
+- add server (fri)
+- login auth checks (fri)
+- data auth checks (fri)
+- survey generation - check for repetition (sat)
+- research: survey generation, (thurs)
+- perspective toxic score calculation (thurs)
 
 
 #### Table of Contents
