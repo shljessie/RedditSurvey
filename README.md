@@ -1,5 +1,9 @@
 # Reddit Survey Website
 
+<img width="307" alt="Screenshot 2023-06-03 at 3 08 30 PM" src="https://github.com/shljessie/RedditSurvey/assets/59305253/6d050e57-d1cb-4eb2-8d0d-06dc59741622">
+<img width="300" alt="Screenshot 2023-06-03 at 3 11 16 PM" src="https://github.com/shljessie/RedditSurvey/assets/59305253/9cbb6238-7484-4b32-a329-7cbacb99e1ae">
+<img width="300" alt="Screenshot 2023-06-03 at 3 12 14 PM" src="https://github.com/shljessie/RedditSurvey/assets/59305253/55a79603-2e9a-4864-a7d4-f78c7ebde955">
+
 Survey generator website based on user viewed reddit comments.
 
 ## TODO
