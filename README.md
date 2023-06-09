@@ -8,15 +8,15 @@ Survey generator website based on user viewed reddit comments.
 
 ## TODO
 
-- add demographics (thurs)
-- add hosting  (fri)
-- add server (fri)
-- login auth checks (fri)
-- data auth checks (fri)
-- survey generation - check for repetition (sun)
-- research: survey generation, (sat)
+- login auth checks -howto (fri)
+- data auth checks -howto (fri)
+- add styling 
+- research: survey generation (sat)
 - perspective toxic score calculation (sat)
 
+- survey generation - check for repetition (sun)
+- add hosting  (sun)
+- add server (sun)
 
 #### Table of Contents
 - [Features](#features)
