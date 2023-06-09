@@ -35,6 +35,15 @@ PERSPECTIVE_API_KEY = os.getenv('PERSPECTIVE_API_KEY')
 conn = sqlite3.connect('./data/database.db', check_same_thread=False)
 app.config['UPLOAD_FOLDER'] = './data/upload_csv'
 
+@app.before_request
+def login_check():
+    # Define the list of allowed routes that don't require login
+    allowed_routes = ['login', 'static']
+
+    # Check if the user is not logged in and the current route requires login
+    if 'username' not in session and request.endpoint not in allowed_routes:
+        return redirect('/')  # Redirect to the login page
+
 
 def create_user_folder(username):
     folder_path = os.path.join("data", username)

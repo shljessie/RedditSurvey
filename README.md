@@ -9,9 +9,9 @@ Survey generator website based on user viewed reddit comments.
 - add server (fri)
 - login auth checks (fri)
 - data auth checks (fri)
-- survey generation - check for repetition (sat)
-- research: survey generation, (thurs)
-- perspective toxic score calculation (thurs)
+- survey generation - check for repetition (sun)
+- research: survey generation, (sat)
+- perspective toxic score calculation (sat)
 
 
 #### Table of Contents
