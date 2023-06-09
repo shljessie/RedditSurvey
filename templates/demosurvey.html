@@ -1,0 +1,35 @@
+
+<form method="POST" action="/demosubmit">
+  <h2>Demographic Questions</h2>
+
+  <label for="age">1. What is your age?</label>
+  <select id="age" name="age">
+    {% for option in age_options %}
+      <option value="{{ option }}">{{ option }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="gender">2. What is your gender?</label>
+  <select id="gender" name="gender">
+    {% for option in gender_options %}
+      <option value="{{ option }}">{{ option }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="ethnicity">3. What is your ethnicity?</label>
+  <select id="ethnicity" name="ethnicity">
+    {% for option in ethnicity_options %}
+      <option value="{{ option }}">{{ option }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="education">4. What is the highest degree or level of school you have completed?</label>
+  <select id="education" name="education">
+    {% for option in education_options %}
+      <option value="{{ option }}">{{ option }}</option>
+    {% endfor %}
+  </select>
+
+
+  <button type="submit">Submit</button>
+</form>

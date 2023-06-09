@@ -21,7 +21,7 @@ from datetime import date
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = '1234'
+app.secret_key = os.getenv('APP_SECRET_KEY')
 
 reddit = praw.Reddit(
     client_id= os.getenv('CLIENT_ID'),
@@ -154,6 +154,18 @@ def saveResults(options,selected_option, username):
 
     print("Results saved successfully!")
 
+def saveSurveyResponseToCSV(response, username):
+    folder_path = os.path.join("data", username, "survey_response")
+    file_path = os.path.join(folder_path, "demographic.csv")
+    
+    fieldnames = list(response.keys())
+
+    with open(file_path, 'a', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        if file.tell() == 0:
+            writer.writeheader()
+        writer.writerow(response)
+
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -279,7 +291,7 @@ def genSurvey():
     # if request.method == 'POST':
         click_counter = session.get('click_counter')
         if click_counter is None:
-            click_counter = 0
+            click_counter = 1
         else:
             click_counter += 1
         session['click_counter'] = click_counter
@@ -300,10 +312,55 @@ def genSurvey():
 
         if session['click_counter'] == 11:
             session['click_counter'] = None
-            return render_template('done.html')
+            return genDemoSurvey()
 
         return render_template('survey.html',option1=option1, option2=option2, click_counter = click_counter)
-    
+
+def genDemoSurvey():
+
+    age_options = ['18-24 years old', '25-34 years old', '35-44 years old', '45-54 years old',
+                   '55-64 years old', '65-74 years old', '75 years or older', 'Prefer not to answer',
+                   'Other']
+    gender_options = ['Woman', 'Man', 'Non-binary', 'Prefer not to answer', 'Prefer to self-describe']
+    ethnicity_options = ['White', 'Hispanic or Latino', 'Black or African American',
+                         'Native American or American Indian', 'Asian/Pacific Islander',
+                         'Prefer not to answer', 'Other']
+    education_options = ['No schooling completed', 'Nursery school to 8th grade', 'Some high school, no diploma',
+                         'High school graduate, diploma, or equivalent', 'Some college but no degree',
+                         'Associate degree', 'Bachelor’s degree', 'Master’s degree', 'Professional degree',
+                         'Doctorate degree', 'Prefer not to answer']
+
+
+    # Pass the options to the HTML template
+    return render_template('demosurvey.html', age_options=age_options, gender_options=gender_options,
+                           ethnicity_options=ethnicity_options, education_options=education_options)
+
+@app.route('/demosubmit', methods=['POST'])
+def submitSurvey():
+    username = session.get('username')
+    # Get the submitted form data
+    age = request.form.get('age')
+    gender = request.form.get('gender')
+    ethnicity = request.form.get('ethnicity')
+    education = request.form.get('education')
+    option1 = request.form.get('option1')
+    option2 = request.form.get('option2')
+    selected_option = request.form.get('selected_option')
+
+    # Create a dictionary to store the survey response
+    response = {
+        'Age': age,
+        'Gender': gender,
+        'Ethnicity': ethnicity,
+        'Education': education,
+        'Option1': option1,
+        'Option2': option2,
+        'SelectedOption': selected_option
+    }
+
+    saveSurveyResponseToCSV(response, username)
+
+    return render_template('done.html')
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080)

@@ -5,4 +5,5 @@
 data/database.db
 
 #
+./process
 process/toxic_score.py
