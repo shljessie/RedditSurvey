@@ -248,28 +248,38 @@ def generate_survey():
                     )
 
             toxicity_scores = []
+            all_scores =[]
+            # https://developers.perspectiveapi.com/s/about-the-api-attributes-and-languages?language=en_US
             for comment in all_comments:
                 analyze_request = {
                     'comment': {'text': comment},
-                    'requestedAttributes': {'TOXICITY': {}}
+                      "requestedAttributes": {
+                                                "TOXICITY": {},
+                                                "SEVERE_TOXICITY": {},
+                                                "IDENTITY_ATTACK": {},
+                                                "INSULT":{},
+                                                "PROFANITY": {},
+                                                "THREAT": {},
+                                                "SEXUALLY_EXPLICIT": {},
+                                                "FLIRTATION": {}
+                                                }
                 }
+
                 response = client.comments().analyze(body=analyze_request).execute()
+                # print(response)
+                scores=[]
+            
+                for i in response['attributeScores'].keys():
+                    score = response['attributeScores'][i]['summaryScore']['value']
+                    scores.append(score)
+                
+                all_scores.append(scores)
                 toxicity_score = response['attributeScores']['TOXICITY']['summaryScore']['value']
                 toxicity_scores.append(toxicity_score)
-#  analyze_request = {
-#         "comment": { "text": reddit_comment },
-#         "requestedAttributes": {
-#             "TOXICITY": {},
-#             "SEVERE_TOXICITY": {},
-#             "IDENTITY_ATTACK": {},
-#             "PROFANITY": {},
-#             "THREAT": {},
-#             "SEXUALLY_EXPLICIT": {},
-#             "FLIRTATION": {}
-#             }
-#         }
+
             toxicity_labels = [score > 0.5 for score in toxicity_scores]
             df['toxicity'] = toxicity_labels
+            df['all'] = scores
 
             # save labeled comments
             folder_path = os.path.join("data", username, "labeled_comments")
