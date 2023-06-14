@@ -340,6 +340,9 @@ def genDemoSurvey():
                          'Associate degree', 'Bachelor’s degree', 'Master’s degree', 'Professional degree',
                          'Doctorate degree', 'Prefer not to answer']
 
+    # social media use time 
+    # average screen time 
+    # 
 
     # Pass the options to the HTML template
     return render_template('demosurvey.html', age_options=age_options, gender_options=gender_options,
