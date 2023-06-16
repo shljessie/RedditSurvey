@@ -166,7 +166,7 @@ def saveSurveyResponseToCSV(response, username):
             writer.writeheader()
         writer.writerow(response)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         uuid = request.form['uuid']
