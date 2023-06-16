@@ -87,5 +87,7 @@ Access the website through your preferred web browser by entering the following 
 3. /data: store the database.db of user info and csv files that users uploaded.
 
 
-## Note to self
-https://stackoverflow.com/questions/13716658/how-to-delete-all-commit-history-in-github 
+## Caddy Server
+- Global options block : https://caddyserver.com/docs/caddyfile/options
+- Caddy Address : https://caddyserver.com/docs/caddyfile/concepts#addresses 
+- Caddy File Server: https://caddyserver.com/docs/caddyfile/directives/file_server 
