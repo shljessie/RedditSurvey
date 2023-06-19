@@ -6,17 +6,12 @@
 
 Survey generator website based on user viewed reddit comments.
 
-## TODO
+## Logging Issues
 
-- login auth checks -howto (fri)
-- data auth checks -howto (fri)
-- add styling 
-- research: survey generation (sat)
-- perspective toxic score calculation (sat)
-
-- survey generation - check for repetition (sun)
-- add hosting  (sun)
-- add server (sun)
+- ssh -Y esrg-scratch-22 
+- Caddy file update
+- caddy start... but not setup correctlY>
+- no errors
 
 #### Table of Contents
 - [Features](#features)
