@@ -30,10 +30,9 @@ reddit = praw.Reddit(
 )
 
 PERSPECTIVE_API_KEY = os.getenv('PERSPECTIVE_API_KEY')
-
+BATCH_SIZE = 10 
 # Establish a connection to the SQLite database
 conn = sqlite3.connect('./data/database.db', check_same_thread=False)
-app.config['UPLOAD_FOLDER'] = './data/upload_csv'
 
 @app.before_request
 def login_check():
@@ -47,9 +46,12 @@ def login_check():
 
 def create_user_folder(username):
     folder_path = os.path.join("data", username)
+    upload_path = os.path.join("data", username,"upload_data")
 
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
+        if not os.path.exists(upload_path):
+             os.makedirs(upload_path)
         print("User folder created successfully.")
     else:
         print("User folder already exists.")
@@ -279,7 +281,7 @@ def generate_survey():
 
             toxicity_labels = [score > 0.5 for score in toxicity_scores]
             df['toxicity'] = toxicity_labels
-            df['all'] = scores
+            df['all'] = all_scores
 
             # save labeled comments
             folder_path = os.path.join("data", username, "labeled_comments")
@@ -298,7 +300,7 @@ def generate_survey():
 @app.route('/survey', methods=['GET', 'POST'])
 def genSurvey():
     # removing for now, perspective api limit reached
-    # if request.method == 'POST':
+    if request.method == 'POST':
         click_counter = session.get('click_counter')
         if click_counter is None:
             click_counter = 1
@@ -376,4 +378,4 @@ def submitSurvey():
     return render_template('done.html')
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8080)
+    app.run(debug=True, port=8078)

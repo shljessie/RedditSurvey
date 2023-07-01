@@ -1,4 +1,4 @@
 reddit.esrg.stanford.edu {
-  reverse_proxy localhost:8080
+  reverse_proxy localhost:8078
   tls shl1027@stanford.edu
 }
