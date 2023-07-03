@@ -36,11 +36,12 @@ conn = sqlite3.connect('./data/database.db', check_same_thread=False)
 
 @app.before_request
 def login_check():
+    print('login checking')
     # Define the list of allowed routes that don't require login
     allowed_routes = ['login', 'static']
-
+    username = request.form.get('username', '') 
     # Check if the user is not logged in and the current route requires login
-    if 'username' not in session and request.endpoint not in allowed_routes:
+    if username not in session and request.endpoint not in allowed_routes:
         return redirect('/')  # Redirect to the login page
 
 
