@@ -2,6 +2,16 @@
 <form method="POST" action="/demosubmit">
   <h2>Demographic Questions</h2>
 
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+      <ul class="flash-messages">
+      {% for message in messages %}
+          <li class="flash-message">{{ message }}</li>
+      {% endfor %}
+      </ul>
+  {% endif %}
+  {% endwith %}
+
   <label for="age">1. What is your age?</label>
   <select id="age" name="age">
     {% for option in age_options %}

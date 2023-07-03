@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, flash, render_template, request, redirect, session
 import sqlite3
 import os
 import re
@@ -34,15 +34,11 @@ BATCH_SIZE = 10
 # Establish a connection to the SQLite database
 conn = sqlite3.connect('./data/database.db', check_same_thread=False)
 
-@app.before_request
-def login_check():
-    print('login checking')
-    # Define the list of allowed routes that don't require login
-    allowed_routes = ['login', 'static']
-    username = request.form.get('username', '') 
-    # Check if the user is not logged in and the current route requires login
-    if username not in session and request.endpoint not in allowed_routes:
-        return redirect('/')  # Redirect to the login page
+# @app.before_request
+# def login_check():
+#     print('login checking')
+#     if 'username' not in session:
+#         return redirect('/')  # Redirect to the login page
 
 
 def create_user_folder(username):
@@ -171,6 +167,7 @@ def saveSurveyResponseToCSV(response, username):
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
+    session.clear()
     if request.method == 'POST':
         uuid = request.form['uuid']
         username = request.form.get('username', '') 
@@ -193,9 +190,8 @@ def login():
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
-    if request.method == 'POST':
-        username = session.get('username')
-
+    username = session.get('username')
+    if username:
         if 'csv_file' not in request.files:
             error = 'No file uploaded.'
             return render_template('dashboard.html', error=error)
@@ -222,13 +218,14 @@ def dashboard():
 
         success = 'File uploaded successfully.'
         return render_template('dashboard.html', success=success)
-
-    return render_template('dashboard.html')
+    else:
+        flash('You are not logged in. Please login and try again.', 'error')
+        return redirect('/')
 
 @app.route('/generate', methods=['GET', 'POST'])
 def generate_survey():
-    if request.method == 'POST':
-        username = session.get('username')
+    username = session.get('username')
+    if username:
         upload_folder = os.path.join("data", username, "scraped_comments")
 
         most_recent_file = find_most_recent_file(upload_folder)
@@ -296,12 +293,15 @@ def generate_survey():
             return render_template('survey.html')
         else:
             return "No data available for survey generation."
-    return render_template('survey.html')
+    else:
+        flash('You are not logged in. Please login and try again.', 'error')
+        return redirect('/')
 
 @app.route('/survey', methods=['GET', 'POST'])
 def genSurvey():
+    username = session.get('username')
     # removing for now, perspective api limit reached
-    if request.method == 'POST':
+    if username:
         click_counter = session.get('click_counter')
         if click_counter is None:
             click_counter = 1
@@ -328,6 +328,9 @@ def genSurvey():
             return genDemoSurvey()
 
         return render_template('survey.html',option1=option1, option2=option2, click_counter = click_counter)
+    else:
+        flash('You are not logged in. Please login and try again.', 'error')
+        return redirect('/')
 
 def genDemoSurvey():
 
@@ -354,29 +357,34 @@ def genDemoSurvey():
 @app.route('/demosubmit', methods=['POST'])
 def submitSurvey():
     username = session.get('username')
-    # Get the submitted form data
-    age = request.form.get('age')
-    gender = request.form.get('gender')
-    ethnicity = request.form.get('ethnicity')
-    education = request.form.get('education')
-    option1 = request.form.get('option1')
-    option2 = request.form.get('option2')
-    selected_option = request.form.get('selected_option')
+    if username:
+        # Get the submitted form data
+        age = request.form.get('age')
+        gender = request.form.get('gender')
+        ethnicity = request.form.get('ethnicity')
+        education = request.form.get('education')
+        option1 = request.form.get('option1')
+        option2 = request.form.get('option2')
+        selected_option = request.form.get('selected_option')
 
-    # Create a dictionary to store the survey response
-    response = {
-        'Age': age,
-        'Gender': gender,
-        'Ethnicity': ethnicity,
-        'Education': education,
-        'Option1': option1,
-        'Option2': option2,
-        'SelectedOption': selected_option
-    }
+        # Create a dictionary to store the survey response
+        response = {
+            'Age': age,
+            'Gender': gender,
+            'Ethnicity': ethnicity,
+            'Education': education,
+            'Option1': option1,
+            'Option2': option2,
+            'SelectedOption': selected_option
+        }
 
-    saveSurveyResponseToCSV(response, username)
+        saveSurveyResponseToCSV(response, username)
 
-    return render_template('done.html')
+        return render_template('done.html')
+    else:
+        # Redirect if not logged in
+        flash('You are not logged in. Please login and try again.', 'error')
+        return redirect('/')
 
 if __name__ == '__main__':
     app.run(debug=True, port=8078)
