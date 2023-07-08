@@ -79,13 +79,11 @@ def find_most_recent_file(upload_folder):
 def extract_all_comments(post_url):
     submission = reddit.submission(url=post_url)
 
-    if len(submission.comments.list()) > 1:
-        i = 1
+    if len(submission.comments.list()) >= 1:
         while True:
             comments = submission.comments
-            print('last comment')
-            print(comments[-1])
-            print('Replace more and show last')
+            print('comments')
+            print(comments)
             try:
                 print(comments.replace_more()[-1])
                 print('Opening more comments...')
@@ -93,10 +91,19 @@ def extract_all_comments(post_url):
                 print('Opened all comments for post:', submission.title)
             comments = comments.list()
             break
+    
+    print('COMMENT: ', comments)
 
-    # Get all comments
-    all_comments = [comment.body for comment in comments]
-    return all_comments
+    if comments:
+        # Get all comments
+        all_comments = [comment.body for comment in comments]
+
+        print('ALL_COMMENTS:', all_comments)
+
+        return all_comments
+
+    else:
+        pass
 
 
 def process_comments(most_recent_file):
@@ -104,6 +111,7 @@ def process_comments(most_recent_file):
     unique_post_urls = record['reddit_post'].dropna().unique()
 
     all_comments = []
+    print('unique_post_urls: ', unique_post_urls)
     for url in unique_post_urls:
         all_comments += extract_all_comments(url)
 
@@ -253,6 +261,13 @@ def generate_survey():
             all_scores =[]
             # https://developers.perspectiveapi.com/s/about-the-api-attributes-and-languages?language=en_US
             for comment in all_comments:
+                print('PERSPECTIVE')
+                print('\n')
+                print('\n')
+                print('\n')
+                print('\n')
+                
+                print('PERSPECTIVE_COMMENT: ', comment)
                 analyze_request = {
                     'comment': {'text': comment},
                       "requestedAttributes": {
