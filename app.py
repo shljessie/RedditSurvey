@@ -76,8 +76,7 @@ def find_most_recent_file(upload_folder):
 def extract_all_comments(post_url):
     submission = reddit.submission(url=post_url)
 
-    if len(submission.comments.list()) > 1:
-        i = 1
+    if len(submission.comments.list()) >= 1:
         while True:
             comments = submission.comments
             print('last comment')
@@ -92,8 +91,11 @@ def extract_all_comments(post_url):
             break
 
     # Get all comments
-    all_comments = [comment.body for comment in comments]
-    return all_comments
+    if comments:
+        all_comments = [comment.body for comment in comments]
+        return all_comments
+    else:
+        pass
 
 
 def process_comments(most_recent_file):
@@ -102,7 +104,9 @@ def process_comments(most_recent_file):
 
     all_comments = []
     for url in unique_post_urls:
-        all_comments += extract_all_comments(url)
+        check = extract_all_comments(url)
+        if check is not None:
+            all_comments += check
 
     seen_comments = record['comment_body_encoded'].tolist()
 
