@@ -227,10 +227,10 @@ def dashboard():
         file_path = os.path.join(upload_folder, filename)
         file.save(file_path)
 
-        success = 'File uploaded successfully.'
+        success = True
         return render_template('dashboard.html', success=success)
-
-    return render_template('dashboard.html')
+    success = False
+    return render_template('dashboard.html',success=success)
 
 @app.route('/generate', methods=['GET', 'POST'])
 def generate_survey():

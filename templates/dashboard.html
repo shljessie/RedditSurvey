@@ -18,7 +18,7 @@
         {% endif %}
 
         {% if success %}
-            <p>{{ success }}</p>
+            <p>File Uploaded Successfully</p>
         {% endif %}
 
         <form method="POST" action="/dashboard" enctype="multipart/form-data" class="form-group">
@@ -28,9 +28,11 @@
         </form>
 
         <br/>
+        {% if success %}
         <form method="POST" action="/generate">
             <button style="margin-left:35%; margin-top: 30px;" class="btn btn-success">Generate Survey</button>
         </form>
+        {% endif %}
     </div>
 </body>
 </html>
