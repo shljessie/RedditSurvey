@@ -7,6 +7,17 @@
 <body class="d-flex justify-content-center" >
     <div class="flex-column" style="margin-top: 30px; " >
         <h6 style=" text-align: center;">Reddit Survey Website</h6>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flash-messages">
+            {% for message in messages %}
+                <li class="flash-message">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+        
         <h2 style="margin-top: 40px;">Dashboard</h2>
 
         <h6  style="margin-top: 50px;">Explanations</h6>
