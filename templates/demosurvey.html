@@ -14,29 +14,33 @@
 
   <label for="age">1. What is your age?</label>
   <select id="age" name="age">
+    <option disabled selected value> -- select an option -- </option>
     {% for option in age_options %}
-      <option value="{{ option }}">{{ option }}</option>
+      <option value="">{{ option }}</option>
     {% endfor %}
   </select>
 
   <label for="gender">2. What is your gender?</label>
   <select id="gender" name="gender">
+    <option disabled selected value> -- select an option -- </option>
     {% for option in gender_options %}
-      <option value="{{ option }}">{{ option }}</option>
+      <option value="">{{ option }}</option>
     {% endfor %}
   </select>
 
   <label for="ethnicity">3. What is your ethnicity?</label>
   <select id="ethnicity" name="ethnicity">
+    <option disabled selected value> -- select an option -- </option>
     {% for option in ethnicity_options %}
-      <option value="{{ option }}">{{ option }}</option>
+      <option value="">{{ option }}</option>
     {% endfor %}
   </select>
 
   <label for="education">4. What is the highest degree or level of school you have completed?</label>
   <select id="education" name="education">
+    <option disabled selected value> -- select an option -- </option>
     {% for option in education_options %}
-      <option value="{{ option }}">{{ option }}</option>
+      <option value="">{{ option }}</option>
     {% endfor %}
   </select>
 
