@@ -190,12 +190,23 @@ def login():
         if user:
             create_user_folder(username)
             session['username'] = username
-            return redirect('/dashboard')
+            print('here')
+            return redirect('/inform')
         else:
             error = "Invalid UUID or username. Please try again."
             return render_template('login.html', error=error)
 
     return render_template('login.html')
+
+@app.route('/inform', methods=['GET', 'POST'])
+def inform():
+    username = session.get('username')
+    print(username)
+    if username:
+        return render_template('inform.html')
+    else:
+        return redirect('/')
+    
 
 
 @app.route('/dashboard', methods=['GET', 'POST'])

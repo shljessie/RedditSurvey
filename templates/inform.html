@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <title>Study Overview</title>
+</head>
+<body class="row justify-content-center align-middle h-100 mx-auto" style="width: 80%; padding:5% 10%">
+  <h6 style=" text-align: center;">Reddit Survey Website</h6>
+
+    <h1 class="col-10 text-center align-self-start" style="width: 80%; padding-bottom:4%" >Study Overview</h1>
+
+    <div class="col-10 text-start align-self-start" >
+    <h2>Consent to Participate</h2>
+    <p>I voluntarily agree to participate in the study described below, conducted by [Research Institution/Organization]. I understand the purpose of the study and what my participation will involve.</p>
+    
+    <h2>Study Outline</h2>
+    <p>[Provide a brief overview of the study, including its objectives, procedures, and any potential risks or benefits to participants. You can also mention the duration of the study and any incentives, if applicable.]</p>
+    
+    <h2>Study Instructions</h2>
+    <ol>
+      <li>Uploading Collected Reddit Data: Please upload any relevant Reddit data that you have collected as part of this study. Follow the provided instructions to ensure the successful submission of the data.</li>
+      <li>Generating Survey of Comments: You will be presented with a survey consisting of comments from Reddit. Please review each comment and provide your feedback or answer any questions that may be asked.</li>
+      <li>Collecting Demographic Information: We will ask you to provide certain demographic information, such as age, gender, and educational background. This information will be used for research purposes only and will be kept confidential.</li>
+    </ol>
+    
+    <h2>Data Usage</h2>
+    <p>The data collected from this study, including the uploaded Reddit data, survey responses, and demographic information, will be used for research purposes only. The data will be anonymized and aggregated, meaning that any personally identifiable information will be removed and the data will be combined with that of other participants.</p>
+    
+    <p>The research findings may be published or presented in academic conferences, journals, or other scholarly outlets. However, no individual participant will be identified in any publications or presentations.</p>
+    
+    <h2>Privacy and Confidentiality</h2>
+    <p>[Explain how participant data will be collected, used, and stored. Discuss any measures in place to protect participant privacy and confidentiality. If applicable, mention any third parties who may have access to the data, such as research partners or ethics committees.]</p>
+    
+    <h2>Voluntary Participation and Right to Withdraw</h2>
+    <p>I understand that my participation in this study is voluntary, and I have the right to withdraw at any time without penalty or loss of benefits. If I choose to withdraw, I understand that any data I have provided up to that point will be retained and used for analysis, but my information will not be included in any future research outputs.</p>
+    
+    <h2>Contact Information</h2>
+    <p>If you have any questions or concerns regarding the study, you may contact [Contact Person/Organization] at [Email Address/Phone Number].</p>
+    
+    {% if message %}
+      <p>{{ message }}</p>
+    {% endif %}
+
+    <h2>Consent</h2>
+    <p>By checking the box below, I confirm that:</p>
+    <label for="consent-checkbox">
+      <input type="checkbox" id="consent-checkbox" required>
+      I have read and understood the information provided, and I voluntarily consent to participate in this study. I also acknowledge that I have the right to withdraw from the study at any time.
+    </label>
+    
+    <br>
+    <br>
+    
+    <form method="POST" action="/dashboard">
+      <button type="submit" class="btn btn-success" id="submit-btn" disabled>Submit</button>
+    </form>
+  </div>
+</body>
+
+<script>
+  document.getElementById('consent-checkbox').addEventListener('change', function() {
+    document.getElementById('submit-btn').disabled = !this.checked;
+  });
+</script>
+
+</html>
+
