@@ -193,6 +193,7 @@ def saveResults(options,selected_option, username):
     print("Results saved successfully!")
 
 def saveSurveyResponseToCSV(response, username):
+    print('Saving Demographic Survey')
     folder_path = os.path.join("data", username, "survey_response")
     file_path = os.path.join(folder_path, "demographic.csv")
     
@@ -340,7 +341,7 @@ def generate_survey():
             df.to_csv(file_path, index=False)
            
 
-            return render_template('survey.html')
+            return redirect('/survey')
         else:
             return "No data available for survey generation."
     else:
@@ -375,13 +376,14 @@ def genSurvey():
 
         if session['click_counter'] == 11:
             session['click_counter'] = None
-            return genDemoSurvey()
+            return redirect('/demosurvey')
 
         return render_template('survey.html',option1=option1, option2=option2, click_counter = click_counter)
     else:
         flash('You are not logged in. Please login and try again.', 'error')
         return redirect('/')
-
+        
+@app.route('/demosurvey', methods=['GET','POST'])
 def genDemoSurvey():
 
     age_options = ['18-24 years old', '25-34 years old', '35-44 years old', '45-54 years old',
@@ -401,15 +403,18 @@ def genDemoSurvey():
     # 
 
     # Pass the options to the HTML template
+    
     return render_template('demosurvey.html', age_options=age_options, gender_options=gender_options,
                            ethnicity_options=ethnicity_options, education_options=education_options)
 
-@app.route('/demosubmit', methods=['POST'])
-def submitSurvey():
+@app.route('/demosubmit', methods=['GET','POST'])
+def demosubmit():
+    print('Submitting DEMO Survey')
     username = session.get('username')
     if username:
         # Get the submitted form data
         age = request.form.get('age')
+        print('AGE', age)
         gender = request.form.get('gender')
         ethnicity = request.form.get('ethnicity')
         education = request.form.get('education')

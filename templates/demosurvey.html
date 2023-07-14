@@ -9,56 +9,56 @@
       <h6 style="margin-bottom: 5%; color:gray;">Reddit Perceived Harm</h6>
       <h3 style="margin-bottom: 5%;">Demographic Questions</h3>
 
-  <form method="POST" action="/demosubmit">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul class="flash-messages">
-            {% for message in messages %}
-                <li class="flash-message">{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-        {% endwith %}
+        <form method="POST" action="/demosubmit">
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class="flash-messages">
+                    {% for message in messages %}
+                        <li class="flash-message">{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+                {% endwith %}
 
-        <label  style="margin-bottom: 2%;" for="age">1. What is your age?</label>
-        
-        <select class="form-select"  id="age" name="age" style="margin-bottom: 5%;">
-          <option disabled selected value> -- select an option -- </option>
-          {% for option in age_options %}
-            <option value="">{{ option }}</option>
-          {% endfor %}
-        </select><br>
-
-
-        <label style="margin-bottom: 2%;" for="gender">2. What is your gender?</label>
-        <select  class="form-select"  id="gender" name="gender"  style="margin-bottom: 5%;">
-          <option disabled selected value> -- select an option -- </option>
-          {% for option in gender_options %}
-            <option value="">{{ option }}</option>
-          {% endfor %}
-        </select></form>
+                <label  style="margin-bottom: 2%;" for="age">1. What is your age?</label>
+                
+                <select class="form-select"  id="age" name="age" style="margin-bottom: 5%;">
+                  <option disabled selected value> -- select an option -- </option>
+                  {% for option in age_options %}
+                    <option value="">{{ option }}</option>
+                  {% endfor %}
+                </select>
 
 
-        <label style="margin-bottom: 2%;" for="ethnicity">3. What is your ethnicity?</label>
-        <select  class="form-select"  id="ethnicity" name="ethnicity"  style="margin-bottom: 5%;">
-          <option disabled selected value> -- select an option -- </option>
-          {% for option in ethnicity_options %}
-            <option value="">{{ option }}</option>
-          {% endfor %}
-        </select></br>
+                <label style="margin-bottom: 2%;" for="gender">2. What is your gender?</label>
+                <select  class="form-select"  id="gender" name="gender"  style="margin-bottom: 5%;">
+                  <option disabled selected value> -- select an option -- </option>
+                  {% for option in gender_options %}
+                    <option value="">{{ option }}</option>
+                  {% endfor %}
+                </select>
 
 
-        <label style="margin-bottom: 2%;" for="education">4. What is the highest degree or level of school you have completed?</label>
-        <select  class="form-select"  id="education" name="education"  style="margin-bottom: 5%;">
-          <option disabled selected value> -- select an option -- </option>
-          {% for option in education_options %}
-            <option value="">{{ option }}</option>
-          {% endfor %}
-        </select></br>
+                <label style="margin-bottom: 2%;" for="ethnicity">3. What is your ethnicity?</label>
+                <select  class="form-select"  id="ethnicity" name="ethnicity"  style="margin-bottom: 5%;">
+                  <option disabled selected value> -- select an option -- </option>
+                  {% for option in ethnicity_options %}
+                    <option value="">{{ option }}</option>
+                  {% endfor %}
+                </select>
 
 
-        <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
-</div>
+                <label style="margin-bottom: 2%;" for="education">4. What is the highest degree or level of school you have completed?</label>
+                <select  class="form-select"  id="education" name="education"  style="margin-bottom: 5%;">
+                  <option disabled selected value> -- select an option -- </option>
+                  {% for option in education_options %}
+                    <option value="">{{ option }}</option>
+                  {% endfor %}
+                </select>
+
+
+                 <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+  </div>
 </body>
 </html>

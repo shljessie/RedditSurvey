@@ -5,7 +5,13 @@
     <title>Reddit Survey</title>
     <script>
         function enableNextButton() {
-            document.getElementById('nextButton').disabled = false;
+            var radioButtons = document.querySelectorAll('input[name="option"]');
+            var nextButton = document.getElementById('nextButton');
+            if (radioButtons.length > 0) {
+                nextButton.disabled = false;
+            } else {
+                nextButton.disabled = true;
+            }
         }
     </script>
 </head>
