@@ -3,10 +3,16 @@
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <title>Reddit Survey</title>
+    <script>
+        function enableNextButton() {
+            document.getElementById('nextButton').disabled = false;
+        }
+    </script>
 </head>
 <body class="d-flex justify-content-center">
     <div class="flex-column" style="margin-top: 30px; width: 600px;" >
-    <h1>Reddit Survey</h1>
+    <h6 style="color:gray; margin-bottom: 2%;">Reddit Perceived Harm</h6>
+    <h5 style="margin-bottom: 5%;">Perceived Harm Questions</h5>
     
     {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -20,16 +26,20 @@
 
     <form method="POST" action="/survey">
         {% if click_counter %}
-        <p>Question {{click_counter}}</p>
+        <p style="color:gray;">Question {{click_counter}}</p>
         {% endif %}
 
-        <h4  style="margin-bottom: 50px; margin-top: 50px;">Which one of these comments have you seen?</h4>
+        <h4  style="font-size:large; margin-bottom: 50px;">Which one of these comments have you seen?</h4>
 
         <div>
             {% if option1 %}
             <label for="option1">
-                <input type="radio" id="option1" name="option" value="{{ option1 }}"> 
-                    {{ option1 }}
+                <input type="radio" id="option1" name="option" value="{{ option1 }}" style="width: auto;" onclick="enableNextButton();"> 
+                    <p style="color: gray; font-size: smaller;  margin-bottom: 0;">{{option1.post_info}}</p>
+
+                    {{ option1.comment }}
+
+                    <p style="color: gray; text-align: end;  margin-top: 5px;">by {{option1.comment_author}}</p>
                 </input>
             </label>
             {% endif %}
@@ -39,13 +49,18 @@
         <div>
             {% if option2 %}
             <label for="option2">
-                <input type="radio" id="option2" name="option" value="{{ option2 }}">
-                 {{ option2 }}
+                <input type="radio" id="option2" name="option" value="{{ option2 }}" onclick="enableNextButton();">
+                    <p style="color: gray; font-size: smaller; margin-bottom: 0;">{{option2.post_info}}</p>
+
+                    {{ option2.comment }}
+
+                    <p style="color: gray; text-align: end;  margin-top: 5px;">by {{option2.comment_author}}</p>
+                </input>
             </label>
         {% endif %}
         </div>
 
-        <button class="btn btn-primary" style="margin-top: 30px;">Next</button>
+        <button id="nextButton" class="btn btn-primary" style="margin-top: 30px;" disabled>Next</button>
         <input type="hidden" name="click_counter" value="{{ click_counter }}">
     </form>
     </div>
