@@ -156,8 +156,18 @@ def generate_combinations(grouped):
         if combination in grouped.groups:
             group = grouped.get_group(combination)
             comments_column = group['comments']
+
             random_comment = random.choice(comments_column.values)
-            groups.append(random_comment)
+                    
+            post_info = group['post_info'].iloc[0]  # Retrieve the post information from the group
+            comment_author = group['comment_authors'].iloc[0]  # Retrieve the comment author from the group
+
+            comment_data = {
+                'comment': random_comment,
+                'post_info': post_info,
+                'comment_author': comment_author
+            }
+            groups.append(comment_data)
     return groups[0], groups[1]
 
 def saveResults(options,selected_option, username):
