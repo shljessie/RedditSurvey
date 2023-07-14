@@ -88,31 +88,48 @@ def extract_all_comments(post_url):
                 print('Opened all comments for post:', submission.title)
             comments = comments.list()
             break
-    
-    print('COMMENT: ', comments)
 
     if comments:
         # Get all comments
         all_comments = [comment.body for comment in comments]
+        all_comment_authors = [comment.author for comment in comments]
 
     # Get all comments
     if comments:
         all_comments = [comment.body for comment in comments]
-        return all_comments
+        all_comment_authors = [comment.author for comment in comments]
+        return all_comments , all_comment_authors
     else:
         pass
 
+def extract_all_post_info(post_url):
+    submission = reddit.submission(url=post_url)
+    postauthor = submission.author.name
+    postname = submission.title
+    subreddit = submission.subreddit
+
+    print('postauthor: ',postauthor)
+    print('postname: ',postname)
+    print('subreddit: ', subreddit)
+    return postname, subreddit, postauthor
 
 def process_comments(most_recent_file):
     record = pd.read_csv(most_recent_file)
     unique_post_urls = record['reddit_post'].dropna().unique()
 
+
     all_comments = []
-    print('unique_post_urls: ', unique_post_urls)
+    all_comment_authors =[]
+    post_info = ''
     for url in unique_post_urls:
-        check = extract_all_comments(url)
-        if check is not None:
-            all_comments += check
+        all_comments , all_comment_authors = extract_all_comments(url)
+
+        postname, subreddit, postauthor = extract_all_post_info(url)
+        if all_comments and all_comment_authors is not None:
+            all_comments += all_comments
+            all_comment_authors += [author.name if author is not None else None for author in all_comment_authors]
+            print("AUTHOR: ", all_comment_authors)
+            post_info += str(postname) +' on r/'+ str(subreddit) +' by '+ str(postauthor)
 
     seen_comments = record['comment_body_encoded'].tolist()
 
@@ -123,9 +140,11 @@ def process_comments(most_recent_file):
         if str(comment) != 'nan'
     ]
 
+    print('SEEN COMMENT:', seen_comments)
+
     unseen_comments = list((Counter(all_comments) - Counter(seen_comments)).elements())
 
-    return all_comments, seen_comments, unseen_comments
+    return all_comments, all_comment_authors, post_info, seen_comments, unseen_comments
 
 def generate_combinations(grouped):
     combinations = [(False, False), (False, True), (True, False), (True, True)]
@@ -253,8 +272,8 @@ def generate_survey():
         if most_recent_file:
             # seen and unseen
             most_recent_file_path = os.path.join(upload_folder,most_recent_file)
-            all_comments, seen_comments, unseen_comments = process_comments(most_recent_file_path)
-            data = {'comments': all_comments, 'seen': [comment in seen_comments for comment in all_comments]}
+            all_comments, all_comment_authors, post_info, seen_comments, unseen_comments = process_comments(most_recent_file_path)
+            data = {'comment_authors': all_comment_authors,'post_info': post_info, 'comments': all_comments, 'seen': [comment in seen_comments for comment in all_comments]}
 
             df = pd.DataFrame(data)
 
@@ -271,13 +290,7 @@ def generate_survey():
             all_scores =[]
             # https://developers.perspectiveapi.com/s/about-the-api-attributes-and-languages?language=en_US
             for comment in all_comments:
-                print('PERSPECTIVE')
-                print('\n')
-                print('\n')
-                print('\n')
-                print('\n')
                 
-                print('PERSPECTIVE_COMMENT: ', comment)
                 analyze_request = {
                     'comment': {'text': comment},
                       "requestedAttributes": {
