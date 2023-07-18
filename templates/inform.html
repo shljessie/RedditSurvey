@@ -5,47 +5,43 @@
   <title>Study Overview</title>
 </head>
 <body class="row justify-content-center align-middle h-100 mx-auto" style="width: 80%; padding:5% 10%">
-  <h6 style="margin-bottom: 5%;">Reddit Perceived Harm</h6>
-
+    <div class="col-10 text-center align-self-start">
+        <a href="https://stanford.edu">
+            <img src="assets/SUSig_Seal_Left.png" border="0" width="100%">
+        </a>
+    </div>
     <h1 class="col-10 text-center align-self-start" style="width: 80%; padding-bottom:4%" >Study Overview</h1>
-
     <div class="col-10 text-start align-self-start" >
-    <h2>Consent to Participate</h2>
-    <p>I voluntarily agree to participate in the study described below, conducted by [Research Institution/Organization]. I understand the purpose of the study and what my participation will involve.</p>
+    <p>
+      In this study, we will be evaluating the effect that viewing comments on Reddit has on the end-user experience. Participating in this study consists of the following steps:
+      <li>Installing a Google Chrome browser extension</li>
+      <li>Browsing Reddit <u>while logged into</u> their Reddit account</li>
+      <li>Uploading data collected by the browser extension</li>
+      <li>Answering a short survey based on the uploaded data</li>
+      <br>
+      We expect this to take approximately 25 minutes of active engagement (5 minutes for the extension installation, 20 minutes for the survey) with passive, regular usage of Reddit by participants over TK days. Participants will be compensated $12.25 for their time.
+    </p>
     
-    <h2>Study Outline</h2>
-    <p>[Provide a brief overview of the study, including its objectives, procedures, and any potential risks or benefits to participants. You can also mention the duration of the study and any incentives, if applicable.]</p>
     
-    <h2>Study Instructions</h2>
-    <ol>
-      <li>Uploading Collected Reddit Data: Please upload any relevant Reddit data that you have collected as part of this study. Follow the provided instructions to ensure the successful submission of the data.</li>
-      <li>Generating Survey of Comments: You will be presented with a survey consisting of comments from Reddit. Please review each comment and provide your feedback or answer any questions that may be asked.</li>
-      <li>Collecting Demographic Information: We will ask you to provide certain demographic information, such as age, gender, and educational background. This information will be used for research purposes only and will be kept confidential.</li>
-    </ol>
-    
-    <h2>Data Usage</h2>
-    <p>The data collected from this study, including the uploaded Reddit data, survey responses, and demographic information, will be used for research purposes only. The data will be anonymized and aggregated, meaning that any personally identifiable information will be removed and the data will be combined with that of other participants.</p>
+    <h4>Data Usage</h4>
+    <p>The data collected from this study, including the uploaded Reddit data, survey responses, and demographic information, will be used for research purposes only. The data will be anonymized and aggregated, meaning that any personally identifiable information will be removed and the data will be combined with that of other participants. Although you must be logged in while using the extension, we will not collect any login information nor attempt to deanonymize participants.</p>
     
     <p>The research findings may be published or presented in academic conferences, journals, or other scholarly outlets. However, no individual participant will be identified in any publications or presentations.</p>
     
-    <h2>Privacy and Confidentiality</h2>
-    <p>[Explain how participant data will be collected, used, and stored. Discuss any measures in place to protect participant privacy and confidentiality. If applicable, mention any third parties who may have access to the data, such as research partners or ethics committees.]</p>
+    <h4>Data Security and Privacy</h4>
+    <p>The browser extension you install will only execute on relevant pages (Reddit domains) and tracks what posts and comments you are viewing. Survey responses will be about the Reddit browsing and demographic data. Any data we collect will be encrypted in transit via TLS and will be stored in secured servers that only research personnel will have access to, and it will be deleted after the study is complete. </p>
     
-    <h2>Voluntary Participation and Right to Withdraw</h2>
+    <h4>Voluntary Participation and Right to Withdraw</h4>
     <p>I understand that my participation in this study is voluntary, and I have the right to withdraw at any time without penalty or loss of benefits. If I choose to withdraw, I understand that any data I have provided up to that point will be retained and used for analysis, but my information will not be included in any future research outputs.</p>
     
-    <h2>Contact Information</h2>
-    <p>If you have any questions or concerns regarding the study, you may contact [Contact Person/Organization] at [Email Address/Phone Number].</p>
+    <h4>Contact Information</h4>
+    <p>If you have any questions or concerns regarding the study, you may contact the researcher leading this experiment at the following e-mail address: cathan@stanford.edu</p>
     
-    {% if message %}
-      <p>{{ message }}</p>
-    {% endif %}
-
-    <h2>Consent</h2>
+    <h4>Consent</h4>
     <p>By checking the box below, I confirm that:</p>
     <label for="consent-checkbox">
       <input type="checkbox" id="consent-checkbox" required>
-      I have read and understood the information provided, and I voluntarily consent to participate in this study. I also acknowledge that I have the right to withdraw from the study at any time.
+      &nbsp;I have read and understood the information provided, and I voluntarily consent to participate in this study. I also acknowledge that I have the right to withdraw from the study at any time.
     </label>
     
     <br>

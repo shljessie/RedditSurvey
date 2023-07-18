@@ -4,13 +4,6 @@ https://reddit.esrg.stanford.edu/
 
 Survey generator website based on user viewed reddit comments.
 
-## Logging Issues
-
-- ssh -Y esrg-scratch-22 
-- Caddy file update
-- caddy start... but not setup correctlY>
-- no errors
-
 #### Table of Contents
 - [Features](#features)
 - [Dependencies](#dependencies)
@@ -49,7 +42,7 @@ To install and set up the website, follow these steps:
 1. Clone the repository: `git clone https://github.com/shljessie/RedditSurvey.git`
 2. Install the required dependencies: `pip install -r requirements.txt`
 3. Creat a .env file with a 
-  - Reddit ClIENT_ID 
+  - Reddit CLIENT_ID 
   - Reddit SECRET_KEY
   - Reddit USER_AGENT
   - Perspective API_KEY
