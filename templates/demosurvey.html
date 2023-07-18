@@ -9,7 +9,7 @@
       <h6 style="margin-bottom: 5%; color:gray;">Reddit Perceived Harm</h6>
       <h3 style="margin-bottom: 5%;">Demographic Questions</h3>
 
-        <form method="POST" action="/demosubmit">
+        <form method="POST" action="/demosubmit" id="survey-form">
                 {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     <ul class="flash-messages">
@@ -20,45 +20,102 @@
                 {% endif %}
                 {% endwith %}
 
-                <label  style="margin-bottom: 2%;" for="age">1. What is your age?</label>
-                
-                <select class="form-select"  id="age" name="age" style="margin-bottom: 5%;">
+                <label style="margin-bottom: 2%;" for="age">1. What is your age?</label>
+                <select class="form-select" id="age" name="age" style="margin-bottom: 5%;">
                   <option disabled selected value> -- select an option -- </option>
                   {% for option in age_options %}
-                    <option value="">{{ option }}</option>
+                    <option value="{{ option }}">{{ option }}</option>
                   {% endfor %}
                 </select>
+                
 
 
                 <label style="margin-bottom: 2%;" for="gender">2. What is your gender?</label>
-                <select  class="form-select"  id="gender" name="gender"  style="margin-bottom: 5%;">
-                  <option disabled selected value> -- select an option -- </option>
+                <div style="margin-bottom: 5%;">
                   {% for option in gender_options %}
-                    <option value="">{{ option }}</option>
+                    <div>
+                      <input class="form-check-input" type="checkbox" id="{{ option }}" name="gender" value="{{ option }}">
+                      <label for="{{ option }}">{{ option }}</label>
+                    </div>
                   {% endfor %}
-                </select>
+                  <div>
+                    <input class="form-check-input" type="checkbox" id="other" name="gender" value="other">
+                    <label for="other">Other</label>
+                    <input class="form-control" type="text" id="other-input" name="other_gender" placeholder="What is your gender?">
+                  </div>
+                </div>
+                
 
 
                 <label style="margin-bottom: 2%;" for="ethnicity">3. What is your ethnicity?</label>
-                <select  class="form-select"  id="ethnicity" name="ethnicity"  style="margin-bottom: 5%;">
-                  <option disabled selected value> -- select an option -- </option>
-                  {% for option in ethnicity_options %}
-                    <option value="">{{ option }}</option>
-                  {% endfor %}
-                </select>
+                <div style="margin-bottom: 5%;">
+                  <select class="form-select" id="ethnicity" name="ethnicity" onchange="handleEthnicitySelection()">
+                    <option disabled selected value> -- select an option -- </option>
+                    {% for option in ethnicity_options %}
+                      <option value="{{ option }}">{{ option }}</option>
+                    {% endfor %}
+                    <option value="other">Other</option>
+                  </select>
+                  <div id="ethnicity-textbox" style="display: none;">
+                    <input class="form-control" type="text" id="other-ethnicity" name="other_ethnicity" placeholder="What is your ethnicity?" style="margin-top: 2%;">
+                  </div>
+                </div>
+                
+                <script>
+                  function handleEthnicitySelection() {
+                    var selectedOption = document.getElementById("ethnicity").value;
+                    var textbox = document.getElementById("ethnicity-textbox");
+                
+                    if (selectedOption === "other") {
+                      textbox.style.display = "block";
+                    } else {
+                      textbox.style.display = "none";
+                    }
+                  }
+                </script>
+                
 
 
                 <label style="margin-bottom: 2%;" for="education">4. What is the highest degree or level of school you have completed?</label>
                 <select  class="form-select"  id="education" name="education"  style="margin-bottom: 5%;">
                   <option disabled selected value> -- select an option -- </option>
                   {% for option in education_options %}
-                    <option value="">{{ option }}</option>
+                    <option value="{{ option }}">{{ option }}</option>
                   {% endfor %}
                 </select>
 
 
-                 <button type="submit" class="btn btn-primary">Submit</button>
+                 <button type="submit" id="submit-btn"  class="btn btn-primary" disabled>Submit</button>
         </form>
   </div>
 </body>
 </html>
+
+<script>
+  // Get all form fields
+  const formFields = document.querySelectorAll('#survey-form select');
+
+  // Function to check if any field has a non-selected option
+  function checkFormFields() {
+    let allSelected = true;
+    formFields.forEach(field => {
+      if (field.value === '') {
+        allSelected = false;
+      }
+    });
+    return allSelected;
+  }
+
+  // Event listener for form field changes
+  formFields.forEach(field => {
+    field.addEventListener('change', () => {
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.disabled = !checkFormFields();
+    });
+  });
+</script>
+
+
+
+
+

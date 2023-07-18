@@ -392,7 +392,7 @@ def genDemoSurvey():
     gender_options = ['Woman', 'Man', 'Non-binary', 'Prefer not to answer', 'Prefer to self-describe']
     ethnicity_options = ['White', 'Hispanic or Latino', 'Black or African American',
                          'Native American or American Indian', 'Asian/Pacific Islander',
-                         'Prefer not to answer', 'Other']
+                         'Prefer not to answer']
     education_options = ['No schooling completed', 'Nursery school to 8th grade', 'Some high school, no diploma',
                          'High school graduate, diploma, or equivalent', 'Some college but no degree',
                          'Associate degree', 'Bachelor’s degree', 'Master’s degree', 'Professional degree',
@@ -414,13 +414,24 @@ def demosubmit():
     if username:
         # Get the submitted form data
         age = request.form.get('age')
-        print('AGE', age)
         gender = request.form.get('gender')
         ethnicity = request.form.get('ethnicity')
         education = request.form.get('education')
         option1 = request.form.get('option1')
         option2 = request.form.get('option2')
         selected_option = request.form.get('selected_option')
+
+        # Check if gender is 'other' and get the other_gender value
+        if gender == 'other':
+            gender = request.form.get('other_gender')
+        else:
+            gender = gender
+
+        # Check if ethnicity is 'other' and get the other_ethnicity value
+        if ethnicity == 'other':
+            ethnicity = request.form.get('other_ethnicity')
+        else:
+            ethnicity = ethnicity
 
         # Create a dictionary to store the survey response
         response = {
