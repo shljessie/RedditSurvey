@@ -11,6 +11,22 @@ Survey generator website based on user viewed reddit comments.
 - caddy start... but not setup correctlY>
 - no errors
 
+### Data Saving Structure 
+Data Saving Structure
+
+Data
+├── user
+│   ├── scraped_comments
+│   │   └── (2023_07_14_23:36:45.csv): uploaded comments from user (upload date)
+│   └── labeled_comments
+│       └── (labeled.csv): comments labeled with perspective scores
+└── survey_response
+    └── (2023-07-01.csv): survey responses for perceived comments
+
+(demographic.csv)
+
+
+
 #### Table of Contents
 - [Features](#features)
 - [Dependencies](#dependencies)
