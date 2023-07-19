@@ -12,6 +12,17 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    ol, ul {
+        line-height: 2; /* Adjust the line height value as needed */
+    }
+
+    .center-form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
 </style>
 
 <!DOCTYPE html>
@@ -22,7 +33,7 @@
 </head>
 <body class="d-flex justify-content-center" >
     <div class="flex-column" style="margin-top: 30px; " >
-        <h6 style="margin-bottom: 5%;">Reddit Perceived Harm</h6>
+        <h6 class="center-form" style="margin-bottom: 5%;">Measuring Perceived Harm on Reddit</h6>
 
         {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -39,24 +50,31 @@
         <h6  style="margin-top: 50px;">Explanations</h6>
         <p>How to download your CSV file:
             <ol>
-                <li>In your reddit extension, click the "Download to csv button"</li>
-                <li>Check the Location of your downloaded CSV file</li>
-                <li>Confirm that all the elements of the file look correct. <a href=""> A sample version is here</a></li>
+                <li>In your reddit extension, click the "Download to CSV Button"</li>
+                <li>Check the location of your downloaded CSV file on your local computer</li>
+                <li>Confirm that all the elements of the file look correct. <a href="https://drive.google.com/file/d/1rPGF6xxSDHmNQc1RAdwqK1w0voNx8rWL/view?usp=sharing"> A sample version is here</a></li>
+                <ul style="color:gray;">
+                    <li>Make sure you have the all the comments (for the entire period) you have viewed in that csv file.</li>
+                    <li>The survey will be generated with the most recent comment you have uploaded.</li>
+                    <li><i>If there are no comments on the CSV file please contact <a href = "mailto: catherinehan@cs.stanford.edu">redditHarm@cs.stanford.edu</a></i></li>
+                </ul>
                 <li>Click on the "Choose File" button below</li>
+                <li>Once you upload the file, you will see a "Generate Survey" button. Click on it to start the survey.</li>
+
             </ol>
-            Upload your CSV comments by clicking on the "Choose File" button </p>
 
         <br/>
         {% if error %}
-            <p id="upload">{{ error }}</p>
+            <p style="color:red;" id="upload">{{ error }}</p>
         {% endif %}
 
         {% if success %}
-            <p id="upload">File Uploaded Successfully</p>
+            <p style="color:green;" id="upload">File Uploaded Successfully</p>
         {% endif %}
 
-        <form id="upload_form" method="POST" action="/dashboard" enctype="multipart/form-data" class="form-group">
-            <label id="upload" for="csv_file" class="form-control-file">Upload CSV File:</label>
+        <form class="center-form" id="upload_form" method="POST" action="/dashboard" enctype="multipart/form-data" class="form-group">
+            <label  style="font-weight: 600; margin-right: 40px; font-size: large; color:royalblue" id="upload" for="csv_file" class="form-control-file">Upload CSV File:   </label>
+            <br/>
             <input  id="upload" type="file" id="csv_file" name="csv_file" accept=".csv">
             <input  id="upload" style="margin-top: 10px;" type="submit" class="btn btn-outline-success" value="Upload">
         </form>

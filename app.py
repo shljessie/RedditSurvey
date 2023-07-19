@@ -151,24 +151,40 @@ def generate_combinations(grouped):
 
     random_combinations = random.sample(combinations, k=2)
 
+    print('RAND COMBO: ', random_combinations)
+
     groups = []
     for combination in random_combinations:
         if combination in grouped.groups:
             group = grouped.get_group(combination)
-            comments_column = group['comments']
+            if group is not None:
+                comments_column = group['comments']
 
-            random_comment = random.choice(comments_column.values)
-                    
-            post_info = group['post_info'].iloc[0]  # Retrieve the post information from the group
-            comment_author = group['comment_authors'].iloc[0]  # Retrieve the comment author from the group
+                random_comment = random.choice(comments_column.values)
 
-            comment_data = {
-                'comment': random_comment,
-                'post_info': post_info,
-                'comment_author': comment_author
-            }
-            groups.append(comment_data)
-    return groups[0], groups[1]
+                post_info = group['post_info'].iloc[0]  # Retrieve the post information from the group
+                comment_author = group['comment_authors'].iloc[0]  # Retrieve the comment author from the group
+
+                comment_data = {
+                    'comment': random_comment,
+                    'post_info': post_info,
+                    'comment_author': comment_author
+                }
+                groups.append(comment_data)
+            else:
+                # redo the random_combinations
+                print("Group is None. Redoing random combinations.")
+                return generate_combinations(grouped)  # Call the function recursively to generate new combinations
+        else:
+            print("Combination not found in groups. Skipping...")
+    
+    if len(groups) >= 2:
+        return groups[0], groups[1]
+    else:
+        print("Not enough elements in groups. Redoing random combinations.")
+        return generate_combinations(grouped)  # Call the function recursively to generate new combinations
+
+
 
 def saveResults(options,selected_option, username):
     folder_path = os.path.join("data", username, "survey_response")
