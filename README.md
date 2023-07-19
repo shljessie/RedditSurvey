@@ -65,7 +65,7 @@ To install and set up the website, follow these steps:
 1. Clone the repository: `git clone https://github.com/shljessie/RedditSurvey.git`
 2. Install the required dependencies: `pip install -r requirements.txt`
 3. Creat a .env file with a 
-  - Reddit ClIENT_ID 
+  - Reddit CLIENT_ID 
   - Reddit SECRET_KEY
   - Reddit USER_AGENT
   - Perspective API_KEY
