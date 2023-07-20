@@ -40,7 +40,7 @@
                   {% endfor %}
                   <div>
                     <input class="form-check-input" type="checkbox" id="other" name="gender" value="other">
-                    <label for="other">Other</label>
+                    <label for="other">Specify</label>
                     <input class="form-control" type="text" id="other-input" name="other_gender" placeholder="What is your gender?">
                   </div>
                 </div>
@@ -54,7 +54,7 @@
                     {% for option in ethnicity_options %}
                       <option value="{{ option }}">{{ option }}</option>
                     {% endfor %}
-                    <option value="other">Other</option>
+                    <option value="other">Specify</option>
                   </select>
                   <div id="ethnicity-textbox" style="display: none;">
                     <input class="form-control" type="text" id="other-ethnicity" name="other_ethnicity" placeholder="What is your ethnicity?" style="margin-top: 2%;">
