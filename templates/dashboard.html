@@ -90,9 +90,9 @@
         {% endwith %}
         
             <div class="flex-column center-form d-flex align-items-center justify-content-center shadow p-5 mb-5 bg-white rounded" style="width:60%;  margin: auto; margin-top: 50px;">
-            <h2 style="margin-top: 10px;">Upload CSV comments</h2>
+            <h2 id="title" style="margin-top: 10px;">Upload CSV comments</h2>
             <p>
-                <ol>
+                <ol  id="instructions">
                     <li>In your reddit extension, click the "Download to CSV Button"</li>
                     <li>Check the location of your downloaded CSV file on your local computer</li>
                     <li>Confirm that all the elements of the file look correct. <a href="https://drive.google.com/file/d/1rPGF6xxSDHmNQc1RAdwqK1w0voNx8rWL/view?usp=sharing"> A sample version is here</a></li>
@@ -124,11 +124,13 @@
   
             <br/>
             {% if success %}
-            <form id="generateForm" method="POST" action="/generate">
-                <button id="gen_survey" style=" margin-top: 30px;" class="btn btn-success">Generate Survey</button>
-                <div class="loader" style="display: none; margin-left:35%; margin-top: 30px;" id="id_loader"></div>
-                <p class="loadertext" style="display: none; margin-left:20%; margin-top: 30px;" id="id_loader_text" > Generating Survey Please Wait a Moment</p>
-            </form>
+            <div class="center-form d-flex flex-column align-items-center justify-content-center">
+                <form id="generateForm" method="POST" action="/generate">
+                    <button id="gen_survey" style="margin-top: 30px;" class="btn btn-success">Generate Survey</button>
+                    <div class="loader" style="display: none; margin-top: 30px; margin-bottom: 80px; margin-left: 30%;" id="id_loader"></div>
+                    <p class="loadertext" style="display: none; margin-top: 30px; font-size: large;" id="id_loader_text" > Generating Survey Please wait a Moment</p>
+                </form>
+            </div>
             {% endif %}
         </div>
     </div>
@@ -138,6 +140,8 @@
     var upload = document.getElementById('upload');
     var upload_form = document.getElementById('upload_form');
     var gen_survey = document.getElementById('gen_survey');
+    var title = document.getElementById('title');
+    var instructions = document.getElementById('instructions');
     var loader = document.getElementById('id_loader');
     var loadertext = document.getElementById('id_loader_text');
     console.log(upload)
@@ -145,6 +149,8 @@
     generateForm.addEventListener('submit', function(event) {
         upload_form.style.display = 'none'; 
         upload.style.display = 'none'; 
+        title.style.display ='none';
+        instructions.style.display='none';
         gen_survey.style.display = 'none'; 
         loader.style.display = 'block'; 
         loadertext.style.display = 'block';
