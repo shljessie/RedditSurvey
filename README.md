@@ -4,12 +4,8 @@ https://reddit.esrg.stanford.edu/
 
 Survey generator website based on user viewed reddit comments.
 
-## Logging Issues
-
-- ssh -Y esrg-scratch-22 
-- Caddy file update
-- caddy start... but not setup correctlY>
-- no errors
+## Server Connection
+- ssh -Y esrg-scratch-22
 
 ### Data Saving Structure 
 Data Saving Structure
@@ -72,22 +68,10 @@ To install and set up the website, follow these steps:
 
 
 ## Usage 
-To use the Reddit Survey Website, follow these steps:
-Run the application: python app.py
+
+To rn the application: 
+python3 app.py
 Access the website through your preferred web browser by entering the following URL: http://localhost:8080
-
-## Database
-**1. database.db :** user database (id,UUID,username,password)
-
-**2. data/{username}/scraped_comments:** user uploaded csv comments
-> YYYY_MM_DD_HH:MM:SS.csv
-
-**3. data/{username}/labeled_comments :** processed comments with Toxicity/Seen labeled
-> labeled_comments.csv
-
-**3. data/{username}/survey_response :** user survey response data
-> YYYY_MM_DD_HH:MM:SS_repsonse.csv
-
 
 ## File Explanation
 1. /templates : contains the user login, and dashboard 
