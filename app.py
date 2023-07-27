@@ -17,6 +17,10 @@ import random
 import csv
 from django.shortcuts import render
 from datetime import date
+import multiprocessing as mp
+
+from multiprocessing import Pool 
+
 
 load_dotenv()
 
@@ -113,45 +117,68 @@ def extract_all_post_info(post_url):
     print('subreddit: ', subreddit)
     return postname, subreddit, postauthor
 
+def process_comments_chunk(chunk_urls):
+    all_comments = []
+    all_comment_authors = []
+    post_info = []
+
+    for url in chunk_urls:
+        try:
+            comments, comment_authors = extract_all_comments(url)
+            postname, subreddit, postauthor = extract_all_post_info(url)
+            if comments and comment_authors is not None:
+                all_comments += comments
+                all_comment_authors += [author.name if author is not None else None for author in comment_authors]
+                post_info += [str(postname) + ' on r/' + str(subreddit) + ' by ' + str(postauthor)]
+        except Exception as e:
+            print(f"Error processing URL: {url}")
+            print(f"Error message: {str(e)}")
+
+    return all_comments, all_comment_authors, post_info
+
+
 def process_comments(most_recent_file):
     record = pd.read_csv(most_recent_file)
     unique_post_urls = record['reddit_post'].dropna().unique()
 
+    num_processes = mp.cpu_count()  # Use the number of available CPU cores
+    chunk_size = max(len(unique_post_urls) // num_processes, 1)  # Set a default chunk size of 1 if num_processes is too high
+
+    chunks = [unique_post_urls[i:i + chunk_size] for i in range(0, len(unique_post_urls), chunk_size)]
+
+    pool = mp.Pool(processes=num_processes)
+    results = pool.map(process_comments_chunk, chunks)
+    pool.close()
+    pool.join()
 
     all_comments = []
-    all_comment_authors =[]
-    post_info = ''
-    for url in unique_post_urls:
-        all_comments , all_comment_authors = extract_all_comments(url)
-
-        postname, subreddit, postauthor = extract_all_post_info(url)
-        if all_comments and all_comment_authors is not None:
-            all_comments += all_comments
-            all_comment_authors += [author.name if author is not None else None for author in all_comment_authors]
-            print("AUTHOR: ", all_comment_authors)
-            post_info += str(postname) +' on r/'+ str(subreddit) +' by '+ str(postauthor)
+    all_comment_authors = []
+    post_info = []
+    for comments, comment_authors, info in results:
+        all_comments += comments
+        all_comment_authors += comment_authors
+        post_info += info * len(comments)
 
     seen_comments = record['comment_body_encoded'].tolist()
-
-    # Decode seen comments and remove NaN values
     seen_comments = [
         unquote(base64.b64decode(comment.encode('utf-8')).decode('utf-8'))
         for comment in seen_comments
         if str(comment) != 'nan'
     ]
 
-    print('SEEN COMMENT:', seen_comments)
-
     unseen_comments = list((Counter(all_comments) - Counter(seen_comments)).elements())
 
+    print("RESULT", all_comments, all_comment_authors, post_info, seen_comments, unseen_comments)
+
     return all_comments, all_comment_authors, post_info, seen_comments, unseen_comments
+
 
 def generate_combinations(grouped):
     combinations = [(False, False), (False, True), (True, False), (True, True)]
 
     random_combinations = random.sample(combinations, k=2)
 
-    print('RAND COMBO: ', random_combinations)
+    # print('RAND COMBO: ', random_combinations)
 
     groups = []
     for combination in random_combinations:
@@ -173,15 +200,16 @@ def generate_combinations(grouped):
                 groups.append(comment_data)
             else:
                 # redo the random_combinations
-                print("Group is None. Redoing random combinations.")
+                # print("Group is None. Redoing random combinations.")
                 return generate_combinations(grouped)  # Call the function recursively to generate new combinations
         else:
-            print("Combination not found in groups. Skipping...")
+            # print("Combination not found in groups. Skipping...")
+            pass
     
     if len(groups) >= 2:
         return groups[0], groups[1]
     else:
-        print("Not enough elements in groups. Redoing random combinations.")
+        # print("Not enough elements in groups. Redoing random combinations.")
         return generate_combinations(grouped)  # Call the function recursively to generate new combinations
 
 
@@ -288,6 +316,54 @@ def dashboard():
     success = False
     return render_template('dashboard.html',success=success)
 
+
+
+import multiprocessing as mp
+from googleapiclient import discovery
+
+def process_comment_toxic(comment):
+    # Create Perspective API client
+    client = discovery.build(
+        "commentanalyzer",
+        "v1alpha1",
+        developerKey=PERSPECTIVE_API_KEY,
+        discoveryServiceUrl="https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1",
+        static_discovery=False,
+    )
+
+    analyze_request = {
+        'comment': {'text': comment},
+        "requestedAttributes": {
+            "TOXICITY": {},
+            "SEVERE_TOXICITY": {},
+            "IDENTITY_ATTACK": {},
+            "INSULT":{},
+            "PROFANITY": {},
+            "THREAT": {},
+            "SEXUALLY_EXPLICIT": {},
+            "FLIRTATION": {}
+        }
+    }
+
+    try:
+        response = client.comments().analyze(body=analyze_request).execute()
+    except Exception as e:
+        print(f"Error processing comment: {str(e)}")
+        # Return default scores and toxicity value
+        return [0]*8, False
+
+    scores = []
+    for i in response['attributeScores'].keys():
+        score = response['attributeScores'][i]['summaryScore']['value']
+        scores.append(score)
+
+    toxicity_score = response['attributeScores']['TOXICITY']['summaryScore']['value']
+
+    return scores, toxicity_score > 0.5
+
+
+
+
 @app.route('/generate', methods=['GET', 'POST'])
 def generate_survey():
     username = session.get('username')
@@ -297,65 +373,31 @@ def generate_survey():
         most_recent_file = find_most_recent_file(upload_folder)
 
         if most_recent_file:
-            # seen and unseen
             most_recent_file_path = os.path.join(upload_folder,most_recent_file)
             all_comments, all_comment_authors, post_info, seen_comments, unseen_comments = process_comments(most_recent_file_path)
             data = {'comment_authors': all_comment_authors,'post_info': post_info, 'comments': all_comments, 'seen': [comment in seen_comments for comment in all_comments]}
 
             df = pd.DataFrame(data)
 
-            #toxic
-            client = discovery.build(
-                    "commentanalyzer",
-                    "v1alpha1",
-                    developerKey=PERSPECTIVE_API_KEY,
-                    discoveryServiceUrl="https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1",
-                    static_discovery=False,
-                    )
+            # Create a multiprocessing Pool
+            pool = mp.Pool(mp.cpu_count())
 
-            toxicity_scores = []
-            all_scores =[]
-            # https://developers.perspectiveapi.com/s/about-the-api-attributes-and-languages?language=en_US
-            for comment in all_comments:
-                
-                analyze_request = {
-                    'comment': {'text': comment},
-                      "requestedAttributes": {
-                                                "TOXICITY": {},
-                                                "SEVERE_TOXICITY": {},
-                                                "IDENTITY_ATTACK": {},
-                                                "INSULT":{},
-                                                "PROFANITY": {},
-                                                "THREAT": {},
-                                                "SEXUALLY_EXPLICIT": {},
-                                                "FLIRTATION": {}
-                                                }
-                }
+            # Process comments in parallel
+            results = pool.map(process_comment_toxic, all_comments)
 
-                response = client.comments().analyze(body=analyze_request).execute()
-                # print(response)
-                scores=[]
-            
-                for i in response['attributeScores'].keys():
-                    score = response['attributeScores'][i]['summaryScore']['value']
-                    scores.append(score)
-                
-                all_scores.append(scores)
-                toxicity_score = response['attributeScores']['TOXICITY']['summaryScore']['value']
-                toxicity_scores.append(toxicity_score)
+            # Get toxicity scores and labels
+            all_scores, toxicity_labels = zip(*results)
 
-            toxicity_labels = [score > 0.5 for score in toxicity_scores]
             df['toxicity'] = toxicity_labels
             df['all'] = all_scores
 
-            # save labeled comments
+            # Save labeled comments
             folder_path = os.path.join("data", username, "labeled_comments")
             if not os.path.exists(folder_path):
                 os.makedirs(folder_path)
 
             file_path = os.path.join(folder_path, "labeled.csv")
             df.to_csv(file_path, index=False)
-           
 
             return redirect('/survey')
         else:
@@ -363,6 +405,7 @@ def generate_survey():
     else:
         flash('You are not logged in. Please login and try again.', 'error')
         return redirect('/')
+
 
 @app.route('/survey', methods=['GET', 'POST'])
 def genSurvey():
