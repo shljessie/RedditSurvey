@@ -18,7 +18,6 @@ import csv
 from django.shortcuts import render
 from datetime import date
 import multiprocessing as mp
-
 from multiprocessing import Pool 
 
 
@@ -117,6 +116,21 @@ def extract_all_post_info(post_url):
     print('subreddit: ', subreddit)
     return postname, subreddit, postauthor
 
+def is_post_deleted(url):
+    # Extract the post ID from the URL
+    post_id = url.split('/')[-2]
+
+    try:
+        # Fetch the post using the Reddit API
+        submission = reddit.submission(id=post_id)
+        
+        # Check if the post has an author (i.e., it is a valid submission)
+        return submission.author is not None
+    except Exception as e:
+        # Handle any errors that might occur during API call
+        print(f"Error fetching post information: {str(e)}")
+        return False
+
 def process_comments_chunk(chunk_urls):
     all_comments = []
     all_comment_authors = []
@@ -140,37 +154,50 @@ def process_comments_chunk(chunk_urls):
 def process_comments(most_recent_file):
     record = pd.read_csv(most_recent_file)
     unique_post_urls = record['reddit_post'].dropna().unique()
+    print("UNIQUE", unique_post_urls)
 
-    num_processes = mp.cpu_count()  # Use the number of available CPU cores
-    chunk_size = max(len(unique_post_urls) // num_processes, 1)  # Set a default chunk size of 1 if num_processes is too high
+    valid_urls = []
+    for url in unique_post_urls:
+        print(url)
+        submission = reddit.submission(url=url)
+        if submission.author is not None:
+            valid_urls.append(url)
 
-    chunks = [unique_post_urls[i:i + chunk_size] for i in range(0, len(unique_post_urls), chunk_size)]
 
-    pool = mp.Pool(processes=num_processes)
-    results = pool.map(process_comments_chunk, chunks)
-    pool.close()
-    pool.join()
+    if valid_urls == []:
+        print('You do not have enough comments to do this exercise. Please browse more comments and return')
+        return not_enough()
+    else:
+        num_processes = mp.cpu_count()  # Use the number of available CPU cores
+        chunk_size = max(len(valid_urls) // num_processes, 1)  # Set a default chunk size of 1 if num_processes is too high
 
-    all_comments = []
-    all_comment_authors = []
-    post_info = []
-    for comments, comment_authors, info in results:
-        all_comments += comments
-        all_comment_authors += comment_authors
-        post_info += info * len(comments)
+        chunks = [valid_urls[i:i + chunk_size] for i in range(0, len(valid_urls), chunk_size)]
 
-    seen_comments = record['comment_body_encoded'].tolist()
-    seen_comments = [
-        unquote(base64.b64decode(comment.encode('utf-8')).decode('utf-8'))
-        for comment in seen_comments
-        if str(comment) != 'nan'
-    ]
+        pool = mp.Pool(processes=num_processes)
+        results = pool.map(process_comments_chunk, chunks)
+        pool.close()
+        pool.join()
 
-    unseen_comments = list((Counter(all_comments) - Counter(seen_comments)).elements())
+        all_comments = []
+        all_comment_authors = []
+        post_info = []
+        for comments, comment_authors, info in results:
+            all_comments += comments
+            all_comment_authors += comment_authors
+            post_info += info * len(comments)
 
-    print("RESULT", all_comments, all_comment_authors, post_info, seen_comments, unseen_comments)
+        seen_comments = record['comment_body_encoded'].tolist()
+        seen_comments = [
+            unquote(base64.b64decode(comment.encode('utf-8')).decode('utf-8'))
+            for comment in seen_comments
+            if str(comment) != 'nan'
+        ]
 
-    return all_comments, all_comment_authors, post_info, seen_comments, unseen_comments
+        unseen_comments = list((Counter(all_comments) - Counter(seen_comments)).elements())
+
+        print("RESULT", all_comments, all_comment_authors, post_info, seen_comments, unseen_comments)
+
+        return all_comments, all_comment_authors, post_info, seen_comments, unseen_comments
 
 
 def generate_combinations(grouped):
@@ -316,11 +343,6 @@ def dashboard():
     success = False
     return render_template('dashboard.html',success=success)
 
-
-
-import multiprocessing as mp
-from googleapiclient import discovery
-
 def process_comment_toxic(comment):
     # Create Perspective API client
     client = discovery.build(
@@ -361,7 +383,27 @@ def process_comment_toxic(comment):
 
     return scores, toxicity_score > 0.5
 
+def check_valid(most_recent_file):
+    record = pd.read_csv(most_recent_file)
+    unique_post_urls = record['reddit_post'].dropna().unique()
+    print("UNIQUE", unique_post_urls)
 
+    valid_urls = []
+    for url in unique_post_urls:
+        print(url)
+        submission = reddit.submission(url=url)
+        if submission.author is not None:
+            valid_urls.append(url)
+
+
+    if valid_urls == []:
+        print('You do not have enough comments to do this exercise. Please browse more comments and return')
+        not_enough
+        redirect('/notenough')
+        render_template('not_enough.html')
+        return False
+    else: 
+        return valid_urls
 
 
 @app.route('/generate', methods=['GET', 'POST'])
@@ -374,37 +416,47 @@ def generate_survey():
 
         if most_recent_file:
             most_recent_file_path = os.path.join(upload_folder,most_recent_file)
-            all_comments, all_comment_authors, post_info, seen_comments, unseen_comments = process_comments(most_recent_file_path)
-            data = {'comment_authors': all_comment_authors,'post_info': post_info, 'comments': all_comments, 'seen': [comment in seen_comments for comment in all_comments]}
+            if check_valid(most_recent_file_path):
+                all_comments, all_comment_authors, post_info, seen_comments, unseen_comments = process_comments(most_recent_file_path)
+                data = {'comment_authors': all_comment_authors,'post_info': post_info, 'comments': all_comments, 'seen': [comment in seen_comments for comment in all_comments]}
 
-            df = pd.DataFrame(data)
+                df = pd.DataFrame(data)
 
-            # Create a multiprocessing Pool
-            pool = mp.Pool(mp.cpu_count())
+                # Create a multiprocessing Pool
+                pool = mp.Pool(mp.cpu_count())
 
-            # Process comments in parallel
-            results = pool.map(process_comment_toxic, all_comments)
+                # Process comments in parallel
+                results = pool.map(process_comment_toxic, all_comments)
+                print('RESULTS: ', results)
 
-            # Get toxicity scores and labels
-            all_scores, toxicity_labels = zip(*results)
+                # Get toxicity scores and labels
+                all_scores, toxicity_labels = zip(*results)
 
-            df['toxicity'] = toxicity_labels
-            df['all'] = all_scores
+                df['toxicity'] = toxicity_labels
+                df['all'] = all_scores
 
-            # Save labeled comments
-            folder_path = os.path.join("data", username, "labeled_comments")
-            if not os.path.exists(folder_path):
-                os.makedirs(folder_path)
+                # Save labeled comments
+                folder_path = os.path.join("data", username, "labeled_comments")
+                if not os.path.exists(folder_path):
+                    os.makedirs(folder_path)
 
-            file_path = os.path.join(folder_path, "labeled.csv")
-            df.to_csv(file_path, index=False)
+                file_path = os.path.join(folder_path, "labeled.csv")
+                df.to_csv(file_path, index=False)
 
-            return redirect('/survey')
-        else:
-            return "No data available for survey generation."
+                return redirect('/survey')
+            else:
+                redirect('/notenough')
+                return not_enough()
     else:
         flash('You are not logged in. Please login and try again.', 'error')
         return redirect('/')
+
+
+@app.route('/notenough', methods=['GET', 'POST'])
+def not_enough():
+    redirect('/notenough')
+    print('NOT ENOUGH')
+    return render_template('not_enough.html')
 
 
 @app.route('/survey', methods=['GET', 'POST'])
