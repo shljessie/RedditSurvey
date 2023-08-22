@@ -1,83 +1,87 @@
-<style>
-    .loader {
-      border: 16px solid #f3f3f3; /* Light grey */
-      border-top: 16px solid #3498db; /* Blue */
-      border-radius: 50%;
-      width: 120px;
-      height: 120px;
-      animation: spin 2s linear infinite;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  
-    ol, ul {
-        line-height: 2; /* Adjust the line height value as needed */
-    }
-  
-    .center-form {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-  
-    .form-upload-box {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border: 2px dashed royalblue; /* Border style */
-            padding: 20px; /* Padding for the form */
-            border-radius: 10px; /* Rounded corners */
-            width: 60%; /* Width of the form */
-            margin: auto; /* Center the form horizontally */
-        }
-  
-        .form-upload-box label {
-            font-weight: 600;
-            margin-right: 40px;
-            font-size: large;
-            color: royalblue;
-        }
-  
-        .form-upload-box input[type="file"] {
-            margin-top: 10px;
-            /* Add any specific styling for the file input if needed */
-        }
-  
-        .form-upload-box input[type="submit"] {
-            margin-top: 10px;
-            /* Add any specific styling for the submit button if needed */
-        }
-  
-  </style>
+
   
   <!DOCTYPE html>
   <html>
   <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <title>Upload CSV</title>
+
+    <style>
+        body{
+            background-color: rgb(237, 245, 248);
+        }
+        #logo{
+            width: 25%;
+            vertical-align: center;
+        }
+        #site-title {
+            width: 100vw;
+            height: 10vh;
+            background-color: white;
+            font-size: larger;
+        }
+        .loader {
+          border: 16px solid #f3f3f3; /* Light grey */
+          border-top: 16px solid #3498db; /* Blue */
+          border-radius: 50%;
+          width: 120px;
+          height: 120px;
+          animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      
+        ol, ul {
+            text-align: start;
+            line-height: 2;
+            margin-left: 5%;
+        }
+
+        .form-upload-box {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                border: 2px dashed royalblue; /* Border style */
+                padding: 20px; /* Padding for the form */
+                border-radius: 10px; /* Rounded corners */
+                width: 60%; /* Width of the form */
+                margin: auto; /* Center the form horizontally */
+            }
+      
+        .form-upload-box label {
+            font-weight: 600;
+            margin-right: 40px;
+            font-size: large;
+            color: royalblue;
+        }
+    
+        .form-upload-box input[type="file"] {
+            margin-top: 10px;
+            /* Add any specific styling for the file input if needed */
+        }
+    
+        .form-upload-box input[type="submit"] {
+            margin-top: 10px;
+            /* Add any specific styling for the submit button if needed */
+        }
+      </style>
   </head>
   <body class="d-flex justify-content-center" >
-  
-    <div class="position-absolute top-0 start-0"  style="margin-left: 2%; margin-top: 1%;">
-        <a href="https://stanford.edu">
-            <img src={{ url_for('static', filename="SUSig_Seal_Left.png") }} width="200px">
-        </a>
+
+    <div class="flex-column text-center">
+        <div id="site-title" class="shadow-sm p-4 bg-white rounded">
+          <img src="{{ url_for('static', filename='download.png') }}" width="40px">
+              &nbsp; &nbsp; 
+              Measuring Perceived Harm on Reddit
+          </img>
     </div>
   
   
-  
-  
     <div class="flex-column" style="margin-top: 30px; " >
-        <p class="flex-column text-center" style="width:100vw; font-weight: 800;">
-            <img src={{ url_for('static', filename="download.png") }} width="40px"/>  Measuring Perceived Harm on Reddit
-        </p>
-        <hr> 
-  
-  
   
         {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -89,10 +93,15 @@
         {% endif %}
         {% endwith %}
         
-            <div class="flex-column center-form d-flex align-items-center justify-content-center shadow p-5 mb-5 bg-white rounded" style="width:60%;  margin: auto; margin-top: 50px;">
-            <h2 id="title" style="margin-top: 10px;">Upload CSV comments</h2>
-            <p>
-                <ol  id="instructions">
+            <div class="flex-column shadow p-5 mb-5 bg-white rounded" style="width:60%;  margin: auto; margin-top: 50px;">
+
+                <a href="https://stanford.edu">
+                    <img src="{{ url_for('static', filename='SUSig_Seal_Left.png') }}" id="logo">
+                  </a>
+              
+            <h3 id="title" class="mt-4">Upload Scraped Reddit Comments CSV</h3>
+
+                <ol id="instructions" class="mt-4">
                     <li>In your reddit extension, click the "Download to CSV Button"</li>
                     <li>Check the location of your downloaded CSV file on your local computer</li>
                     <li>Confirm that all the elements of the file look correct. <a href="https://drive.google.com/file/d/1rPGF6xxSDHmNQc1RAdwqK1w0voNx8rWL/view?usp=sharing"> A sample version is here</a></li>
@@ -103,10 +112,9 @@
                     </ul>
                     <li>Click on the "Choose File" button below</li>
                     <li>Once you upload the file, you will see a "Generate Survey" button. Click on it to start the survey.</li>
-  
                 </ol>
-  
             <br/>
+
             {% if error %}
                 <p style="color:red;" id="upload">{{ error }}</p>
             {% endif %}
@@ -116,10 +124,9 @@
             {% endif %}
   
             <form id="upload_form" method="POST" action="/dashboard" enctype="multipart/form-data" class="form-group center-form">
-                <!-- <label style="font-weight: 600; margin-right: 40px; font-size: large; color:royalblue" id="upload" for="csv_file" class="form-control-file form-label">Upload CSV File </label> -->
                 <br/>
                 <input class="form-control" id="upload" type="file" id="csv_file" name="csv_file" accept=".csv">
-                <input  id="upload" style="margin-left: 10px;" type="submit" class="btn btn-outline-success" value="Upload">
+                <input  id="upload" type="submit" class="btn btn-outline-success w-100 mt-4" value="Upload">
             </form>
   
             <br/>
