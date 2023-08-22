@@ -40,8 +40,11 @@
         
         <form method="POST" action="/likertsurvey">
 
+
+
           {% if data %}
-          <p style="color:gray;">{{data}}</p>
+          <p style="color:gray;" name="comment">{{data}}</p>
+          <input type="hidden" name="comment" value="{{ data }}">
           {% endif %}
 
           <label><input type="radio" name="rating" value="1" onclick="enableNextButton();"> Strongly Disagree</label><br>

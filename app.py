@@ -241,10 +241,13 @@ def generate_combinations(grouped):
 
 
 
-def saveResults(options,selected_option, username):
+def saveResults(options,selected_option, username, likert=False):
     folder_path = os.path.join("data", username, "survey_response")
     current_date = date.today().strftime("%Y-%m-%d")
-    file_path = os.path.join(folder_path, f"{current_date}.csv")
+    if likert == True:
+        file_path = os.path.join(folder_path, f"{current_date}_likert.csv")
+    else:
+        file_path = os.path.join(folder_path, f"{current_date}.csv")
     
     # Check if the CSV file already exists
     if not os.path.isfile(file_path):
@@ -505,10 +508,6 @@ def likertSurvey():
     selected_data = pd.read_csv(file_path)
     random_row = selected_data.sample(n=1)
     comment = random_row["Selected Option"].values[0]
-    # print(comment)
-    # comment_comment = comment['comment']
-    # comment_post_info = comment['post_info']
-    # comment_author = comment['comment_author']
 
     if username:
         click_counter = session.get('click_counter')
@@ -516,14 +515,18 @@ def likertSurvey():
             click_counter = 1
         else:
             click_counter += 1
-            session['click_counter'] = click_counter
+        session['click_counter'] = click_counter
+        
+        selected_option = request.form.get('rating')
+        comment_option = request.form.get('comment')
+        saveResults(comment_option,selected_option, username, True)  
 
         if session['click_counter'] == 11:
             session['click_counter'] = None
 
             return redirect('/demosurvey')
 
-        return render_template('likertsurvey.html', data = comment )
+        return render_template('likertsurvey.html', data = comment, click_counter = click_counter )
     else:
         flash('You are not logged in. Please login and try again.', 'error')
         return redirect('/')
