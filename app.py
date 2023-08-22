@@ -519,7 +519,8 @@ def likertSurvey():
         
         selected_option = request.form.get('rating')
         comment_option = request.form.get('comment')
-        saveResults(comment_option,selected_option, username, True)  
+        if selected_option!=None: 
+            saveResults(comment_option,selected_option, username, True)  
 
         if session['click_counter'] == 11:
             session['click_counter'] = None
