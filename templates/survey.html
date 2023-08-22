@@ -45,6 +45,8 @@
 
                     {{ option1.comment }}
 
+                    <input type="hidden" name="option1_value" value="{{ option1.comment }}">
+
                     <p style="color: gray; text-align: end;  margin-top: 5px;">by {{option1.comment_author}}</p>
                 </input>
             </label>
@@ -60,11 +62,15 @@
 
                     {{ option2.comment }}
 
+                    <input type="hidden" name="option2_value" value="{{ option2.comment }}">
+
                     <p style="color: gray; text-align: end;  margin-top: 5px;">by {{option2.comment_author}}</p>
                 </input>
             </label>
         {% endif %}
         </div>
+
+
 
         <button id="nextButton" class="btn btn-primary" style="margin-top: 30px;" disabled>Next</button>
         <input type="hidden" name="click_counter" value="{{ click_counter }}">

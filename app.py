@@ -258,8 +258,7 @@ def saveResults(options,selected_option, username):
     with open(file_path, mode='a', newline='') as csvfile:
         fieldnames = ['Options','Selected Option']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writerow({'Options': options})
-        writer.writerow({'Selected Option': selected_option})
+        writer.writerow({'Options': options, 'Selected Option': selected_option})
 
     print("Results saved successfully!")
 
@@ -483,7 +482,9 @@ def genSurvey():
         # Call your function to save the results        
         options= [option1,option2]
         selected_option = request.form.get('option')
-        saveResults(options,selected_option, username)  
+        option1_value = request.form.get('option1_value')
+        option2_value = request.form.get('option2_value')
+        saveResults([option1_value,option2_value],selected_option, username)  
 
         if session['click_counter'] == 11:
             session['click_counter'] = None
