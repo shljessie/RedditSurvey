@@ -60,13 +60,16 @@
         }
     
         .form-upload-box input[type="file"] {
-            margin-top: 10px;
+            margin-top: 2px;
             /* Add any specific styling for the file input if needed */
         }
     
         .form-upload-box input[type="submit"] {
-            margin-top: 10px;
+            margin-top: 2px;
             /* Add any specific styling for the submit button if needed */
+        }
+        #generateForm{
+            width:100%;
         }
       </style>
   </head>
@@ -94,12 +97,8 @@
         {% endwith %}
         
             <div class="flex-column shadow p-5 mb-5 bg-white rounded" style="width:60%;  margin: auto; margin-top: 50px;">
-
-                <a href="https://stanford.edu">
-                    <img src="{{ url_for('static', filename='SUSig_Seal_Left.png') }}" id="logo">
-                  </a>
               
-            <h3 id="title" class="mt-4">Upload Scraped Reddit Comments CSV</h3>
+            <h4 id="title" class="mt-2">Upload Scraped Reddit Comments CSV</h4>
 
                 <ol id="instructions" class="mt-4">
                     <li>In your reddit extension, click the "Download to CSV Button"</li>
@@ -126,19 +125,24 @@
             <form id="upload_form" method="POST" action="/dashboard" enctype="multipart/form-data" class="form-group center-form">
                 <br/>
                 <input class="form-control" id="upload" type="file" id="csv_file" name="csv_file" accept=".csv">
-                <input  id="upload" type="submit" class="btn btn-outline-success w-100 mt-4" value="Upload">
+                <input  id="upload" type="submit" class="btn btn-outline-success w-100 mt-2" value="Upload">
             </form>
   
             <br/>
             {% if success %}
             <div class="center-form d-flex flex-column align-items-center justify-content-center">
                 <form id="generateForm" method="POST" action="/generate">
-                    <button id="gen_survey" style="margin-top: 30px;" class="btn btn-success">Generate Survey</button>
-                    <div class="loader" style="display: none; margin-top: 30px; margin-bottom: 80px; margin-left: 30%;" id="id_loader"></div>
-                    <p class="loadertext" style="display: none; margin-top: 30px; font-size: large;" id="id_loader_text" > Generating Survey Please wait a Moment</p>
+                    <button id="gen_survey" class="btn btn-primary w-100">Generate Survey</button>
+                    <div class="loader" style="display: none; margin-top: 30px; margin-bottom: 80px; margin:auto;" id="id_loader"></div>
+                    <p class="loadertext" style="display: none; margin-top: 30px;" id="id_loader_text" > Generating Survey. Please wait a moment</p>
+                    <i style="margin-top: 10px;">This can take up to 1 minute</i>
                 </form>
             </div>
             {% endif %}
+
+            <a href="https://stanford.edu">
+                <img src="{{ url_for('static', filename='SUSig_Seal_Left.png') }}" id="logo" class="mt-4">
+            </a>
         </div>
     </div>
   </body>
