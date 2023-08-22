@@ -1,66 +1,84 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <title>Login</title>
+    <style>
+        body{
+            background-color: rgb(237, 245, 248);
+        }
+        #logo{
+            width: 200px;
+            vertical-align: center;
+        }
+        #site-title {
+            width: 100vw;
+            height: 10vh;
+            background-color: white;
+            font-size: larger;
+        }
+        
+        .login-box {
+            margin: auto;
+            margin-top: 4%;
+            max-width: 700px;
+        }
+    </style>
 </head>
 
+<body class="d-flex justify-content-center">
 
+    <div class="flex-column text-center">
 
-
-<body class="d-flex justify-content-center" >
-
-    <div class="position-absolute top-0 start-0"  style="margin-left: 2%; margin-top: 1%;">
-        <a href="https://stanford.edu">
-            <img src={{ url_for('static', filename="SUSig_Seal_Left.png") }} width="200px">
-        </a>
-    </div>
-
-
-    <div class="flex-column text-center" style="margin-top: 30px;" >
-        <p class="flex-column text-center" style="width:100vw; font-weight: 800;">
-            <img src={{ url_for('static', filename="download.png") }} width="40px"/>  Measuring Perceived Harm on Reddit
-        </p>
-        <hr> 
-        <!-- <p> Enter you your UUID and Username to login. <br/> The UUID/Username is listed in the original study notice.
-            <br/> If you have forgotten it, please contact xxx@stanford.edu</p> -->
+        <div id="site-title" class="shadow-sm p-4 bg-white rounded">
+            <img src="{{ url_for('static', filename='download.png') }}" width="40px">
+                &nbsp; &nbsp; 
+                Measuring Perceived Harm on Reddit
+            </img>
+        </div>
 
         {% if error %}
-            <p>{{ error }}</p>
+        <p>{{ error }}</p>
         {% endif %}
 
         {% with messages = get_flashed_messages() %}
         {% if messages %}
-            <ul class="flash-messages">
+        <ul class="flash-messages">
             {% for message in messages %}
-                <li class="flash-message">{{ message }}</li>
+            <li class="flash-message">{{ message }}</li>
             {% endfor %}
-            </ul>
+        </ul>
         {% endif %}
         {% endwith %}
-        <div class="d-flex align-items-center justify-content-center shadow p-5 mb-5 bg-white rounded" style="margin:auto; margin-top: 4%; max-width: 600px;">    
-        <form method="POST" action="/" >
-            <h2 style="margin-top: 4%;">Login</h2>
-            <div class="form-group row text-center">
-                <label for="uuid" class="col-sm-2 col-form-label">UUID:</label>
-                <input type="text" class="form-control" id="uuid" name="uuid" required>
-            </div>
-            <div class="form-group row">
-                <label for="username" class="col-sm-2 col-form-label">Username:</label>
-                <input type="text" class="form-control" id="username" name="username" required>
-            </div>
-            <div class="form-group row">
-                <a class="col-sm-2 col-form-label  text-end" href="./forgot.html" style="margin-top: 2%; width:100%;">Forgot UUID/Username?</a>
-            </div>
-            <div style="float:right; margin-top: 30px;">
-                <input type="submit" class="btn btn-primary" value="Login">
-            </div>
 
-
-        </form>
-
+        <div class="d-flex align-items-center justify-content-center shadow p-5 bg-white rounded login-box">
+            <form method="POST" action="/" class="w-100">
+                <a href="https://stanford.edu">
+                    <img src="{{ url_for('static', filename='SUSig_Seal_Left.png') }}" id="logo">
+                </a>
+                <h2 class="mt-4">Login</h2>
+                <div class="form-group row text-center">
+                    <label for="uuid" class="col-form-label"></label>
+                    <input type="text" class="form-control w-100" id="uuid" name="uuid" placeholder="UUID" required>
+                </div>
+                <div class="form-group row">
+                    <label for="username" class="col-form-label"></label>
+                    <input type="text" class="form-control w-100" id="username" name="username" placeholder="Username" required>
+                </div>
+                <div class="form-group row">
+                    <a class="col-sm-2 col-form-label text-center mt-4 w-100" href="./forgot.html">Forgot UUID/Username?</a>
+                </div>
+                <div class="mt-4 text-end">
+                    <input type="submit" class="btn btn-primary w-100" value="Login">
+                </div>
+            </form>
         </div>
+
     </div>
 
+
+
 </body>
+
 </html>
