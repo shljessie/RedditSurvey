@@ -488,14 +488,47 @@ def genSurvey():
 
         if session['click_counter'] == 11:
             session['click_counter'] = None
-            return redirect('/demosurvey')
+
+            return redirect('/likertsurvey')
 
         return render_template('survey.html',option1=option1, option2=option2, click_counter = click_counter)
     else:
         flash('You are not logged in. Please login and try again.', 'error')
         return redirect('/')
         
-@app.route('/demosurvey', methods=['GET','POST'])
+@app.route('/likertsurvey', methods=['GET','POST'])
+def likertSurvey():
+    username = session.get('username')
+    folder_path = os.path.join("data", username, "survey_response")
+    current_date = date.today().strftime("%Y-%m-%d")
+    file_path = os.path.join(folder_path, f"{current_date}.csv")
+    selected_data = pd.read_csv(file_path)
+    random_row = selected_data.sample(n=1)
+    comment = random_row["Selected Option"].values[0]
+    # print(comment)
+    # comment_comment = comment['comment']
+    # comment_post_info = comment['post_info']
+    # comment_author = comment['comment_author']
+
+    if username:
+        click_counter = session.get('click_counter')
+        if click_counter is None:
+            click_counter = 1
+        else:
+            click_counter += 1
+            session['click_counter'] = click_counter
+
+        if session['click_counter'] == 11:
+            session['click_counter'] = None
+
+            return redirect('/demosurvey')
+
+        return render_template('likertsurvey.html', data = comment )
+    else:
+        flash('You are not logged in. Please login and try again.', 'error')
+        return redirect('/')
+
+@app.route('/demosurvey', methods=['GET','POST'])    
 def genDemoSurvey():
 
     age_options = ['18-24 years old', '25-34 years old', '35-44 years old', '45-54 years old',

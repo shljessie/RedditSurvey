@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>Reddit Survey</title>
+    <script>
+        function enableNextButton() {
+            var radioButtons = document.querySelectorAll('input[name="rating"]');
+            var nextButton = document.getElementById('nextButton');
+            if (radioButtons.length > 0) {
+                nextButton.disabled = false;
+            } else {
+                nextButton.disabled = true;
+            }
+        }
+    </script>
+</head>
+<body class="d-flex justify-content-center">
+    <div class="flex-column" style="margin-top: 30px; width: 600px;" >
+    <h6 style="color:gray; margin-bottom: 2%;">Measuring Perceived Harm on Reddit</h6>
+    <h5 style="margin-bottom: 5%;">LIKERT Questions</h5>
+    
+    <!-- {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class="flash-messages">
+        {% for message in messages %}
+            <li class="flash-message">{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %} -->
+
+    <form method="POST" action="/likertsurvey">
+        {% if click_counter %}
+        <p style="color:gray;">Question {{click_counter}}</p>
+        {% endif %}
+
+        <h4  style="font-size:large; margin-bottom: 50px;">How impactful was this comment on a scale of 1(not impactful) to 5(very impactful)?</h4>
+
+        
+        <form method="POST" action="/likertsurvey">
+
+          {% if data %}
+          <p style="color:gray;">{{data}}</p>
+          {% endif %}
+
+          <label><input type="radio" name="rating" value="1" onclick="enableNextButton();"> Strongly Disagree</label><br>
+          <label><input type="radio" name="rating" value="2" onclick="enableNextButton();"> Disagree</label><br>
+          <label><input type="radio" name="rating" value="3" onclick="enableNextButton();"> Neutral</label><br>
+          <label><input type="radio" name="rating" value="4" onclick="enableNextButton();"> Agree</label><br>
+          <label><input type="radio" name="rating" value="5" onclick="enableNextButton();"> Strongly Agree</label><br>
+
+          <br>
+
+
+          <button id="nextButton" class="btn btn-primary" style="margin-top: 30px;" disabled>Next</button>
+          <input type="hidden" name="click_counter" value="{{ click_counter }}">
+        </form>
+    </form>
+    </div>
+</body>
+</html>
