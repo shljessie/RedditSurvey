@@ -58,21 +58,23 @@
     </div>
 
     <div class="d-flex flex-column align-items-center justify-content-center shadow p-5 bg-white rounded inform-box">
-    <h5 style="margin-bottom: 5%;">LIKERT Questions</h5>
+    <!-- <h5 style="margin-bottom: 5%;">LIKERT Questions</h5> -->
 
     <form method="POST" action="/likertsurvey">
         {% if click_counter %}
         <p style="color:gray;">Question {{click_counter}}</p>
         {% endif %}
 
-        <h4  style="font-size:large; margin-bottom: 50px;">How impactful was this comment on a scale of 1(not impactful) to 5(very impactful)?</h4>
+        <h4  style="font-size:large; margin-bottom: 50px;">This comment was impactful to me.</h4>
 
         
         <form method="POST" action="/likertsurvey">
 
           {% if data %}
-          <p style="color:gray;" name="comment">{{data}}</p>
-          <input type="hidden" name="comment" value="{{ data }}">
+          <p style="color: gray; font-size: smaller; margin-bottom: 0; text-align: start;">{{data.post_info}}</p>
+          <p style="color:black; text-align: start;" name="comment">{{data.comment}}</p>
+          <p style="color: gray; text-align: end;  margin-top: 5px;">by {{data.comment_author}}</p>
+          <input type="hidden" name="comment" value="{{ data.comment }}">
           {% endif %}
 
           <div class="likertOptions">

@@ -3,12 +3,56 @@
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <title>Done</title>
+    <style>
+        body{
+           background-color: rgb(237, 245, 248);
+       }
+       #site-title {
+           width: 100vw;
+           height: 10vh;
+           background-color: white;
+           font-size: larger;
+       }
+       .likertOptions{
+           display: flex;
+           flex-direction: row;
+           justify-content: space-between;
+           margin-top: 10%;
+       }
+       .radio >label {
+           margin-top: 10px;
+       }
+       .radio {
+           display: flex;
+           flex-direction: column;
+       }
+       .inform-box {
+           margin: auto;
+           margin-top: 4%;
+           max-width: 900px;
+       }
+       input[type=radio]{
+           transform:scale(1.5);
+       }
+   </style>
 </head>
-<body class="d-flex justify-content-center flex-column" style="margin:50px; width: 70%;">
-    <h5  style="white-space: pre-line">Thank you for participating in the study. </h5>
-    <div  style="white-space: pre-line">If you have any further questions about the study, please do not hesitate to contact :
-         (Catherine Han, <a href = "mailto: catherinehan@cs.stanford.edu">catherinehan@cs.stanford.edu</a>)
-         (Seonghee Lee,<a href = "mailto: shl1027@stanford.edu">shl1027@stanford.edu</a>)
-        </div>
+<body class="d-flex justify-content-center flex-column">
+
+    <div class="flex-column text-center">
+        <div id="site-title" class="shadow-sm p-4 bg-white rounded">
+          <img src="{{ url_for('static', filename='download.png') }}" width="40px">
+              &nbsp; &nbsp; 
+              Measuring Perceived Harm on Reddit
+          </img>
+    </div>
+
+    <div class="d-flex flex-column align-items-center justify-content-start shadow p-5 bg-white rounded inform-box">
+        <h5  style="white-space: pre-line">Thank you for participating in the study. </h5>
+            <div  style="white-space: pre-line">If you have any further questions about the study, please do not hesitate to contact :
+                <br/>
+                (Catherine Han, <a href = "mailto: catherinehan@cs.stanford.edu">catherinehan@cs.stanford.edu</a>)
+                (Seonghee Lee,<a href = "mailto: shl1027@stanford.edu">shl1027@stanford.edu</a>)
+            </div>
+    </div>
 </body>
 </html>
