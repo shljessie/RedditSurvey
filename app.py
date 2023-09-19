@@ -35,15 +35,7 @@ reddit = praw.Reddit(
 
 PERSPECTIVE_API_KEY = os.getenv('PERSPECTIVE_API_KEY')
 BATCH_SIZE = 10 
-# Establish a connection to the SQLite database
 conn = sqlite3.connect('./data/database.db', check_same_thread=False)
-
-# @app.before_request
-# def login_check():
-#     print('login checking')
-#     if 'username' not in session:
-#         return redirect('/')  # Redirect to the login page
-
 
 def create_user_folder(username):
     folder_path = os.path.join("data", username)
@@ -93,15 +85,10 @@ def extract_all_comments(post_url):
             comments = comments.list()
             break
 
-    if comments:
-        # Get all comments
-        all_comments = [comment.body for comment in comments]
-        all_comment_authors = [comment.author for comment in comments]
-
     # Get all comments
     if comments:
-        all_comments = [comment.body for comment in comments]
-        all_comment_authors = [comment.author for comment in comments]
+        all_comments = [comment.body for comment in comments[:100]]
+        all_comment_authors = [comment.author for comment in comments[:100]]
         return all_comments , all_comment_authors
     else:
         pass
@@ -112,23 +99,16 @@ def extract_all_post_info(post_url):
     postname = submission.title
     subreddit = submission.subreddit
 
-    print('postauthor: ',postauthor)
-    print('postname: ',postname)
-    print('subreddit: ', subreddit)
+    print('extracted', postname, subreddit, postauthor)
     return postname, subreddit, postauthor
 
 def is_post_deleted(url):
-    # Extract the post ID from the URL
     post_id = url.split('/')[-2]
 
     try:
-        # Fetch the post using the Reddit API
         submission = reddit.submission(id=post_id)
-        
-        # Check if the post has an author (i.e., it is a valid submission)
         return submission.author is not None
     except Exception as e:
-        # Handle any errors that might occur during API call
         print(f"Error fetching post information: {str(e)}")
         return False
 
@@ -157,20 +137,14 @@ def process_comments(most_recent_file):
     unique_post_urls = record['reddit_post'].dropna().unique()
     print("UNIQUE", unique_post_urls)
 
-    valid_urls = []
-    for url in unique_post_urls:
-        print(url)
-        submission = reddit.submission(url=url)
-        if submission.author is not None:
-            valid_urls.append(url)
-
+    valid_urls = [url for url in unique_post_urls if reddit.submission(url=url).author is not None]
 
     if valid_urls == []:
         print('You do not have enough comments to do this exercise. Please browse more comments and return')
         return not_enough()
     else:
-        num_processes = mp.cpu_count()  # Use the number of available CPU cores
-        chunk_size = max(len(valid_urls) // num_processes, 1)  # Set a default chunk size of 1 if num_processes is too high
+        num_processes = mp.cpu_count() 
+        chunk_size = max(len(valid_urls) // num_processes, 1) 
 
         chunks = [valid_urls[i:i + chunk_size] for i in range(0, len(valid_urls), chunk_size)]
 
@@ -195,8 +169,6 @@ def process_comments(most_recent_file):
         ]
 
         unseen_comments = list((Counter(all_comments) - Counter(seen_comments)).elements())
-
-        print("RESULT", all_comments, all_comment_authors, post_info, seen_comments, unseen_comments)
 
         return all_comments, all_comment_authors, post_info, seen_comments, unseen_comments
 
@@ -252,13 +224,11 @@ def saveResults(options,selected_option, username, likert=False):
     
     # Check if the CSV file already exists
     if not os.path.isfile(file_path):
-        # Create the file with the header
         with open(file_path, mode='w', newline='') as csvfile:
             fieldnames = ['Options','Selected Option']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
 
-    # Append the selected option to the CSV file
     with open(file_path, mode='a', newline='') as csvfile:
         fieldnames = ['Options','Selected Option']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -393,7 +363,6 @@ def check_valid(most_recent_file):
 
     valid_urls = []
     for url in unique_post_urls:
-        print(url)
         submission = reddit.submission(url=url)
         if submission.author is not None:
             valid_urls.append(url)
@@ -465,7 +434,6 @@ def not_enough():
 @app.route('/survey', methods=['GET', 'POST'])
 def genSurvey():
     username = session.get('username')
-    # removing for now, perspective api limit reached
     if username:
         click_counter = session.get('click_counter')
         if click_counter is None:
