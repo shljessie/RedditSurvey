@@ -1,0 +1,155 @@
+<style>
+  .loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  ol, ul {
+      line-height: 2; /* Adjust the line height value as needed */
+  }
+
+  .center-form {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
+
+  .form-upload-box {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          border: 2px dashed royalblue; /* Border style */
+          padding: 20px; /* Padding for the form */
+          border-radius: 10px; /* Rounded corners */
+          width: 60%; /* Width of the form */
+          margin: auto; /* Center the form horizontally */
+      }
+
+      .form-upload-box label {
+          font-weight: 600;
+          margin-right: 40px;
+          font-size: large;
+          color: royalblue;
+      }
+
+      .form-upload-box input[type="file"] {
+          margin-top: 10px;
+          /* Add any specific styling for the file input if needed */
+      }
+
+      .form-upload-box input[type="submit"] {
+          margin-top: 10px;
+          /* Add any specific styling for the submit button if needed */
+      }
+
+</style>
+
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <title>Upload CSV</title>
+</head>
+<body class="d-flex justify-content-center" >
+
+  <div class="position-absolute top-0 start-0"  style="margin-left: 2%; margin-top: 2%;">
+      <a href="https://stanford.edu">
+          <img src={{ url_for('static', filename="SUSig_Seal_Left.png") }} width="200px">
+      </a>
+  </div>
+
+
+
+
+  <div class="flex-column" style="margin-top: 30px; " >
+      <p class="flex-column text-center" style="width:100vw; font-weight: 800;">
+          <img src={{ url_for('static', filename="download.png") }} width="40px"/>  Measuring Perceived Harm on Reddit
+      </p>
+      <hr> 
+
+
+
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          <ul class="flash-messages">
+          {% for message in messages %}
+              <li class="flash-message">{{ message }}</li>
+          {% endfor %}
+          </ul>
+      {% endif %}
+      {% endwith %}
+      
+          <div class="flex-column center-form d-flex align-items-center justify-content-center shadow p-5 mb-5 bg-white rounded" style="width:60%;  margin: auto; margin-top: 50px;">
+          <h2 style="margin-top: 10px;">Upload CSV comments</h2>
+          <p>
+              <ol>
+                  <li>In your reddit extension, click the "Download to CSV Button"</li>
+                  <li>Check the location of your downloaded CSV file on your local computer</li>
+                  <li>Confirm that all the elements of the file look correct. <a href="https://drive.google.com/file/d/1rPGF6xxSDHmNQc1RAdwqK1w0voNx8rWL/view?usp=sharing"> A sample version is here</a></li>
+                  <ul style="color:gray;">
+                      <li>Make sure you have the all the comments (for the entire period) you have viewed in that csv file.</li>
+                      <li>The survey will be generated with the most recent comment you have uploaded.</li>
+                      <li><i>If there are no comments on the CSV file please contact <a href = "mailto: catherinehan@cs.stanford.edu">redditHarm@cs.stanford.edu</a></i></li>
+                  </ul>
+                  <li>Click on the "Choose File" button below</li>
+                  <li>Once you upload the file, you will see a "Generate Survey" button. Click on it to start the survey.</li>
+
+              </ol>
+
+          <br/>
+          {% if error %}
+              <p style="color:red;" id="upload">{{ error }}</p>
+          {% endif %}
+
+          {% if success %}
+              <p style="color:green;" id="upload">File Uploaded Successfully</p>
+          {% endif %}
+
+          <form id="upload_form" method="POST" action="/dashboard" enctype="multipart/form-data" class="form-group center-form">
+              <label style="font-weight: 600; margin-right: 40px; font-size: large; color:royalblue" id="upload" for="csv_file" class="form-control-file form-label">Upload CSV File </label>
+              <br/>
+              <input class="form-control" id="upload" type="file" id="csv_file" name="csv_file" accept=".csv">
+              <input  id="upload" style="margin-top: 10px;" type="submit" class="btn btn-outline-success" value="Upload">
+          </form>
+
+          <br/>
+          {% if success %}
+          <form id="generateForm" method="POST" action="/generate">
+              <button id="gen_survey" style="margin-left:35%; margin-top: 30px;" class="btn btn-success">Generate Survey</button>
+              <div class="loader" style="display: none; margin-left:35%; margin-top: 30px;" id="id_loader"></div>
+              <p class="loadertext" style="display: none; margin-left:20%; margin-top: 30px;" id="id_loader_text" > Generating Survey Please Wait a Moment</p>
+              <p>This can take up to 5-10 minutes</p>
+          </form>
+          {% endif %}
+      </div>
+  </div>
+</body>
+
+<script>
+  var upload = document.getElementById('upload');
+  var upload_form = document.getElementById('upload_form');
+  var gen_survey = document.getElementById('gen_survey');
+  var loader = document.getElementById('id_loader');
+  var loadertext = document.getElementById('id_loader_text');
+  console.log(upload)
+
+  generateForm.addEventListener('submit', function(event) {
+      upload_form.style.display = 'none'; 
+      upload.style.display = 'none'; 
+      gen_survey.style.display = 'none'; 
+      loader.style.display = 'block'; 
+      loadertext.style.display = 'block';
+  });
+</script>
+
+</html>
