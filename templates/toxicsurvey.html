@@ -36,15 +36,20 @@
         }
     </style>
     <script>
-        function enableNextButton() {
-            var radioButtons = document.querySelectorAll('input[name="rating"]');
-            var nextButton = document.getElementById('nextButton');
-            if (radioButtons.length > 0) {
-                nextButton.disabled = false;
-            } else {
-                nextButton.disabled = true;
-            }
-        }
+      function enableNextButton() {
+          var checkboxes = document.querySelectorAll('input[name="toxicity"]');
+          var nextButton = document.getElementById('nextButton');
+          var isChecked = false;
+
+          for (var i = 0; i < checkboxes.length; i++) {
+              if (checkboxes[i].checked) {
+                  isChecked = true;
+                  break;
+              }
+          }
+
+          nextButton.disabled = !isChecked;
+      }
     </script>
 </head>
 <body class="d-flex justify-content-center">
@@ -60,17 +65,14 @@
     <div class="d-flex flex-column align-items-center justify-content-center shadow p-5 bg-white rounded inform-box">
     <!-- <h5 style="margin-bottom: 5%;">LIKERT Questions</h5> -->
 
-    <form method="POST" action="/likertsurvey">
+    <form method="POST" action="/toxiccatsurvey">
         {% if click_counter %}
         <p style="color:gray;">Question {{click_counter}}</p>
         {% endif %}
 
-        <p style="font-size:small;">To what extent do you agree with the following statement: </p>
-        <h4  style="font-size:large;"><br/> The comment had a significant impact on me.</h4>
-        <p style="margin-bottom: 50px;">(Impact: Severe Toxicity, Insult, Profanity, Identity attack, Threat, Sexually explicit)</p>
-
+        <h4 style="font-size:large;"><br/>What Toxic Category does the following Comment Fall Into?</h4>
         
-        <form method="POST" action="/likertsurvey">
+        <form method="POST" action="/toxiccatsurvey">
 
           {% if data %}
           <p style="color: gray; font-size: smaller; margin-bottom: 0; text-align: start;">{{data.post_info}}</p>
@@ -79,12 +81,13 @@
           <input type="hidden" name="comment" value="{{ data.comment }}">
           {% endif %}
 
-          <div class="likertOptions">
-            <label class="radio"><input class="mb-2" type="radio" name="rating" value="1" onclick="enableNextButton();"> Strongly Disagree</label><br>
-            <label class="radio"><input class="mb-2" type="radio" name="rating" value="2" onclick="enableNextButton();"> Disagree</label><br>
-            <label class="radio"><input class="mb-2" type="radio" name="rating" value="3" onclick="enableNextButton();"> Neutral</label><br>
-            <label class="radio"><input class="mb-2" type="radio" name="rating" value="4" onclick="enableNextButton();"> Agree</label><br>
-            <label class="radio"><input class="mb-2" type="radio" name="rating" value="5" onclick="enableNextButton();"> Strongly Agree</label><br>
+          <div class="checkbox">
+            <input type="checkbox" name="toxicity" value="Severe Toxicity" onchange="enableNextButton()"> Severe Toxicity<br>
+            <input type="checkbox" name="toxicity" value="Insult" onchange="enableNextButton()"> Insult<br>
+            <input type="checkbox" name="toxicity" value="Profanity" onchange="enableNextButton()"> Profanity<br>
+            <input type="checkbox" name="toxicity" value="Identity attack" onchange="enableNextButton()"> Identity attack<br>
+            <input type="checkbox" name="toxicity" value="Threat" onchange="enableNextButton()"> Threat<br>
+            <input type="checkbox" name="toxicity" value="Sexually explicit" onchange="enableNextButton()"> Sexually explicit<br>
           </div>
           <br>
 

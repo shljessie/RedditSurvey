@@ -214,11 +214,13 @@ def generate_combinations(grouped):
 
 
 
-def saveResults(options,selected_option, username, likert=False):
+def saveResults(options,selected_option, username, surveyType=''):
     folder_path = os.path.join("data", username, "survey_response")
     current_date = date.today().strftime("%Y-%m-%d")
-    if likert == True:
+    if surveyType == 'likert':
         file_path = os.path.join(folder_path, f"{current_date}_likert.csv")
+    elif surveyType == 'toxicCat':
+        file_path = os.path.join(folder_path, f"{current_date}_toxicCat.csv")
     else:
         file_path = os.path.join(folder_path, f"{current_date}.csv")
     
@@ -490,17 +492,55 @@ def likertSurvey():
         selected_option = request.form.get('rating')
         comment_option = request.form.get('comment')
         if selected_option!=None: 
-            saveResults(comment_option,selected_option, username, True)  
+            saveResults(comment_option,selected_option, username, 'likert')  
 
         if session['click_counter'] == 11:
             session['click_counter'] = None
 
-            return redirect('/demosurvey')
+            return redirect('/toxiccatsurvey')
 
         return render_template('likertsurvey.html', data = comment, click_counter = click_counter )
     else:
         flash('You are not logged in. Please login and try again.', 'error')
         return redirect('/')
+
+@app.route('/toxiccatsurvey', methods=['GET','POST'])    
+def toxicCatSurvey():
+    username = session.get('username')
+    folder_path = os.path.join("data", username, "survey_response")
+    current_date = date.today().strftime("%Y-%m-%d")
+    file_path = os.path.join(folder_path, f"{current_date}.csv")
+    selected_data = pd.read_csv(file_path)
+    random_row = selected_data.sample(n=1)
+    comment = random_row["Selected Option"].values[0]
+    comment = ast.literal_eval(comment)
+
+    if username:
+        click_counter = session.get('click_counter')
+        if click_counter is None:
+            click_counter = 1
+        else:
+            click_counter += 1
+        session['click_counter'] = click_counter
+    
+        # Retrieving the selected checkboxes
+        selected_toxic_categories = request.form.getlist('toxicity')
+        comment_option = request.form.get('comment')
+        
+        if selected_toxic_categories:
+            # Assuming saveResults function can handle the list of categories
+            saveResults(comment_option, selected_toxic_categories, username, 'toxicCat')  
+
+        if session['click_counter'] == 11:
+            session['click_counter'] = None
+            return redirect('/demosurvey')
+
+        return render_template('toxicsurvey.html', data=comment, click_counter=click_counter)
+    else:
+        flash('You are not logged in. Please login and try again.', 'error')
+        return redirect('/')
+
+
 
 @app.route('/demosurvey', methods=['GET','POST'])    
 def genDemoSurvey():
