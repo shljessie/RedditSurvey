@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>Reddit Survey</title>
+    <style>
+         body{
+            background-color: rgb(237, 245, 248);
+        }
+        #site-title {
+            width: 100vw;
+            height: 10vh;
+            background-color: white;
+            font-size: larger;
+        }
+        .likertOptions{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .inform-box {
+            margin: auto;
+            margin-top: 4%;
+            max-width: 900px;
+        }
+        input[type=radio]{
+            transform:scale(1.5);
+        }
+    </style>
+    <script>
+    </script>
+</head>
+<body class="d-flex justify-content-center">
+
+    <div class="flex-column text-center">
+        <div id="site-title" class="shadow-sm p-4 bg-white rounded">
+          <img src="{{ url_for('static', filename='download.png') }}" width="40px">
+              &nbsp; &nbsp; 
+              Measuring Perceived Harm on Reddit
+          </img>
+    </div>
+
+    <div class="d-flex flex-column align-items-center justify-content-center shadow p-5 bg-white rounded inform-box">
+    <!-- <h5 style="margin-bottom: 5%;">LIKERT Questions</h5> -->
+
+    <form method="POST" action="/subsurvey">
+      <form method="POST" action="/subsurvey">
+        {% if data %}
+            {% for subreddit in data %}
+                <h5>{{ subreddit }}</h5>
+                
+                <p style="font-weight: 600;">How toxic is this community? (1 (not toxic) - 10 (extremely toxic))</p>
+                <div class="likertOptions">
+                  {% for i in range(1, 11) %}
+                    <input style="display: none;" type="checkbox" name="subreddit" value="{{ subreddit }}"/>
+                      <div style="display: inline-block; text-align: center; margin-right: 15px;">
+                        <label>{{ i }}</label><br>
+                        <input type="radio" name="toxicity_{{ subreddit }}" value="{{ i }}">
+                    </div>
+                  {% endfor %}
+                </div>
+
+
+                <br/>
+                <p style="font-weight: 600;">If the subreddit is very toxic, why do you stay in this subreddit?</p>
+                <textarea name="stay_reason_{{ subreddit }}"class="form-control" id="exampleFormControlTextarea1" rows="4" cols="50" placeholder="Your answer here..."></textarea>
+                
+                <hr>
+            {% endfor %}
+        {% endif %}
+        
+        <button id="nextButton" class="btn btn-primary w-100" style="margin-top: 30px;">Next</button>
+        <input type="hidden" name="click_counter" value="{{ click_counter }}">
+    </form>
+    </form>
+    </div>
+</body>
+</html>

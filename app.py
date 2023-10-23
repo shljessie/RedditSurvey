@@ -213,6 +213,26 @@ def generate_combinations(grouped):
         return generate_combinations(grouped)  # Call the function recursively to generate new combinations
 
 
+def saveToxicResults(subreddit,rating, reason, username):
+    folder_path = os.path.join("data", username, "survey_response")
+    current_date = date.today().strftime("%Y-%m-%d")
+    file_path = os.path.join(folder_path, f"{current_date}_toxicCat.csv")
+
+        
+    # Check if the CSV file already exists
+    if not os.path.isfile(file_path):
+        with open(file_path, mode='w', newline='') as csvfile:
+            fieldnames = ['SubReddit','Rating', 'Reason']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+
+    with open(file_path, mode='a', newline='') as csvfile:
+        fieldnames = ['SubReddit','Rating', 'Reason']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writerow({'SubReddit': subreddit, 'Rating': rating, 'Reason': reason })
+
+    print("Results saved successfully!")
+
 
 def saveResults(options,selected_option, username, surveyType=''):
     folder_path = os.path.join("data", username, "survey_response")
@@ -221,6 +241,10 @@ def saveResults(options,selected_option, username, surveyType=''):
         file_path = os.path.join(folder_path, f"{current_date}_likert.csv")
     elif surveyType == 'toxicCat':
         file_path = os.path.join(folder_path, f"{current_date}_toxicCat.csv")
+    elif surveyType == 'subRank':
+        file_path = os.path.join(folder_path, f"{current_date}_subRank.csv")
+    elif surveyType =='subReddit':
+        file_path = os.path.join(folder_path,f"{current_date}_subReddit.csv")
     else:
         file_path = os.path.join(folder_path, f"{current_date}.csv")
     
@@ -533,9 +557,86 @@ def toxicCatSurvey():
 
         if session['click_counter'] == 11:
             session['click_counter'] = None
-            return redirect('/demosurvey')
+            return redirect('/subsurvey')
 
         return render_template('toxicsurvey.html', data=comment, click_counter=click_counter)
+    else:
+        flash('You are not logged in. Please login and try again.', 'error')
+        return redirect('/')
+
+
+@app.route('/subsurvey', methods=['GET','POST'])   
+def subSurvey():
+    username = session.get('username')
+    folder_path = os.path.join("data", username, "survey_response")
+    current_date = date.today().strftime("%Y-%m-%d")
+    file_path = os.path.join(folder_path, f"{current_date}.csv")
+    data = pd.read_csv(file_path)
+    subreddits = set()
+    
+    for index, row in data.iterrows():
+        comment = row["Selected Option"]
+        if isinstance(comment, str) and comment != 'nan':
+            try:
+                comment = ast.literal_eval(comment)  
+                subreddit_match = re.search(r"(r/\w+)", comment['post_info'])
+                if subreddit_match:
+                    subreddits.add(subreddit_match.group(1)) 
+                    
+            except ValueError as e:
+                print(f"Error in row {index}: {e}")
+
+    if username:
+
+        if request.method == 'POST':
+            print('HEREE')
+            print(subreddits)
+            
+            for subreddit in subreddits:
+                toxicity_rating = request.form.get(f'toxicity_{subreddit}')
+                print(toxicity_rating)
+                stay_reason = request.form.get(f'stay_reason_{subreddit}')
+                print(stay_reason)
+                saveToxicResults(subreddit, toxicity_rating, stay_reason, username)
+            
+            return redirect('/subranksurvey')
+
+        return render_template('subredditsurvey.html', data=list(subreddits))
+    else:
+        flash('You are not logged in. Please login and try again.', 'error')
+        return redirect('/')
+
+
+@app.route('/subranksurvey', methods=['GET','POST'])    
+def gensubRankSurvey():
+    username = session.get('username')
+    folder_path = os.path.join("data", username, "survey_response")
+    current_date = date.today().strftime("%Y-%m-%d")
+    file_path = os.path.join(folder_path, f"{current_date}.csv")
+    data = pd.read_csv(file_path)
+    subreddits = set()
+    
+    for index, row in data.iterrows():
+        comment = row["Selected Option"]
+        if isinstance(comment, str) and comment != 'nan':
+            try:
+                comment = ast.literal_eval(comment)  
+                subreddit_match = re.search(r"(r/\w+)", comment['post_info'])
+                if subreddit_match:
+                    subreddits.add(subreddit_match.group(1)) 
+                    
+            except ValueError as e:
+                print(f"Error in row {index}: {e}")
+
+    if username:
+        if request.method == 'POST':
+            for subreddit in subreddits:
+                toxicity_ranking = request.form.get(f'toxicity_{subreddit}')
+                saveResults(subreddit, toxicity_ranking, username,'subRank')
+            
+            return redirect('/demosurvey')
+
+        return render_template('subranksurvey.html', data=list(subreddits))
     else:
         flash('You are not logged in. Please login and try again.', 'error')
         return redirect('/')
@@ -557,12 +658,6 @@ def genDemoSurvey():
                          'Associate degree', 'Bachelor’s degree', 'Master’s degree', 'Professional degree',
                          'Doctorate degree', 'Prefer not to answer']
 
-    # social media use time 
-    # average screen time 
-    # 
-
-    # Pass the options to the HTML template
-    
     return render_template('demosurvey.html', age_options=age_options, gender_options=gender_options,
                            ethnicity_options=ethnicity_options, education_options=education_options)
 
