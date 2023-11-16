@@ -503,7 +503,7 @@ def likertSurvey():
     selected_data = pd.read_csv(file_path)
     random_row = selected_data.sample(n=1)
     comment = random_row["Selected Option"].values[0]
-    comment = ast.literal_eval(comment)
+    comment = ast.literal_eval(comment)   ## Error check nan/null error (try except)
 
     if username:
         click_counter = session.get('click_counter')
