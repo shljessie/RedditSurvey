@@ -500,10 +500,17 @@ def likertSurvey():
     folder_path = os.path.join("data", username, "survey_response")
     current_date = date.today().strftime("%Y-%m-%d")
     file_path = os.path.join(folder_path, f"{current_date}.csv")
+
     selected_data = pd.read_csv(file_path)
-    random_row = selected_data.sample(n=1)
-    comment = random_row["Selected Option"].values[0]
-    comment = ast.literal_eval(comment)   ## Error check nan/null error (try except)
+    comment = None
+
+    for _, row in selected_data.iterrows():
+        try:
+            if pd.notna(row["Selected Option"]):
+                comment = ast.literal_eval(row["Selected Option"])
+                break 
+        except ValueError as e:
+            continue
 
     if username:
         click_counter = session.get('click_counter')
@@ -534,10 +541,17 @@ def toxicCatSurvey():
     folder_path = os.path.join("data", username, "survey_response")
     current_date = date.today().strftime("%Y-%m-%d")
     file_path = os.path.join(folder_path, f"{current_date}.csv")
+
     selected_data = pd.read_csv(file_path)
-    random_row = selected_data.sample(n=1)
-    comment = random_row["Selected Option"].values[0]
-    comment = ast.literal_eval(comment)
+    comment = None
+
+    for _, row in selected_data.iterrows():
+        try:
+            if pd.notna(row["Selected Option"]):
+                comment = ast.literal_eval(row["Selected Option"])
+                break 
+        except ValueError as e:
+            continue
 
     if username:
         click_counter = session.get('click_counter')
@@ -568,6 +582,10 @@ def toxicCatSurvey():
 @app.route('/subsurvey', methods=['GET','POST'])   
 def subSurvey():
     username = session.get('username')
+    if not username:
+        flash('You are not logged in. Please login and try again.', 'error')
+        return redirect('/')
+    
     folder_path = os.path.join("data", username, "survey_response")
     current_date = date.today().strftime("%Y-%m-%d")
     file_path = os.path.join(folder_path, f"{current_date}.csv")
@@ -578,34 +596,22 @@ def subSurvey():
         comment = row["Selected Option"]
         if isinstance(comment, str) and comment != 'nan':
             try:
-                comment = ast.literal_eval(comment)  
-                subreddit_match = re.search(r"(r/\w+)", comment['post_info'])
-                if subreddit_match:
-                    subreddits.add(subreddit_match.group(1)) 
-                    
-            except ValueError as e:
+                comment = ast.literal_eval(comment)
+                if isinstance(comment, dict):  # Checking if the result is a dictionary
+                    subreddit_match = re.search(r"(r/\w+)", comment.get('post_info', ''))
+                    if subreddit_match:
+                        subreddits.add(subreddit_match.group(1))                    
+            except (ValueError, SyntaxError) as e:
                 print(f"Error in row {index}: {e}")
 
-    if username:
+    if request.method == 'POST':
+        for subreddit in subreddits:
+            toxicity_rating = request.form.get(f'toxicity_{subreddit}')
+            stay_reason = request.form.get(f'stay_reason_{subreddit}')
+            saveToxicResults(subreddit, toxicity_rating, stay_reason, username)
+        return redirect('/subranksurvey')
 
-        if request.method == 'POST':
-            print('HEREE')
-            print(subreddits)
-            
-            for subreddit in subreddits:
-                toxicity_rating = request.form.get(f'toxicity_{subreddit}')
-                print(toxicity_rating)
-                stay_reason = request.form.get(f'stay_reason_{subreddit}')
-                print(stay_reason)
-                saveToxicResults(subreddit, toxicity_rating, stay_reason, username)
-            
-            return redirect('/subranksurvey')
-
-        return render_template('subredditsurvey.html', data=list(subreddits))
-    else:
-        flash('You are not logged in. Please login and try again.', 'error')
-        return redirect('/')
-
+    return render_template('subredditsurvey.html', data=list(subreddits))
 
 @app.route('/subranksurvey', methods=['GET','POST'])    
 def gensubRankSurvey():
