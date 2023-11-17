@@ -47,19 +47,16 @@
       <form method="POST" action="/subsurvey">
         {% if data %}
             {% for subreddit in data %}
-                <h5>{{ subreddit }}</h5>
-                
-                <p style="font-weight: 600;">How toxic is this community? (1 (not toxic) - 10 (extremely toxic))</p>
-                <div class="likertOptions">
-                  {% for i in range(1, 11) %}
-                    <input style="display: none;" type="checkbox" name="subreddit" value="{{ subreddit }}"/>
-                      <div style="display: inline-block; text-align: center; margin-right: 15px;">
-                        <label>{{ i }}</label><br>
-                        <input type="radio" name="toxicity_{{ subreddit }}" value="{{ i }}">
-                    </div>
-                  {% endfor %}
+                <div>
+                    <label for="toxicity_{{ subreddit }}">Rate the toxicity for {{ subreddit }}:</label>
+                    <select name="toxicity_{{ subreddit }}" id="toxicity_{{ subreddit }}">
+                        <option value="not_toxic">Not Toxic</option>
+                        <option value="slightly_toxic">Slightly Toxic</option>
+                        <option value="moderately_toxic">Moderately Toxic</option>
+                        <option value="very_toxic">Very Toxic</option>
+                    </select>
                 </div>
-
+            {% endfor %}
 
                 <br/>
                 <p style="font-weight: 600;">If the subreddit is very toxic, why do you stay in this subreddit?</p>
