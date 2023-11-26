@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>Study Instructions</title>
+    <style>
+        body{
+            background-color: rgb(237, 245, 248);
+        }
+        #logo{
+            width: 25%;
+            vertical-align: center;
+        }
+        #site-title {
+            width: 100vw;
+            height: 10vh;
+            background-color: white;
+            font-size: larger;
+        }
+        .inform-box {
+            margin: auto;
+            margin-top: 4%;
+            max-width: 900px;
+        }
+    </style>
+</head>
+
+<body class="d-flex justify-content-center">
+
+  <div class="flex-column text-center">
+      <div id="site-title" class="shadow-sm p-4 bg-white rounded">
+        <img src="{{ url_for('static', filename='download.png') }}" width="40px">
+        
+            &nbsp; &nbsp; 
+            Measuring Perceived Harm on Reddit
+        </img>
+  </div>
+
+  <div class="d-flex flex-column align-items-center justify-content-center shadow p-5 bg-white rounded inform-box">
+
+    <a href="https://stanford.edu">
+      <img src="{{ url_for('static', filename='SUSig_Seal_Left.png') }}" id="logo">
+    </a>
+
+    <h1 class="text-center mt-4 mb-4">Extension Installation</h1>
+    <div class="text-start align-self-start mt-4">
+    <h4>Extension Installation and Uinstallation</h4>
+    <ol start="2">
+      <li>Download the Chrome extension file zip at this link.</li>
+      <li>Unzip the folder (double click on Mac, right click --> Extract here on Windows). It should produce a folder in your Downloads folder named reddit-extension-main.</li>
+      <li>Navigate to <a href="chrome://extensions/" target="_blank">chrome://extensions/</a> in the Chrome search bar.</li>
+      <li>In the upper right corner of the nav bar, there is a toggle to turn Developer Mode on or off. Turn it on!</li>
+      <li>In the left corner, click the 'Load unpacked' button.</li>
+      <li>Navigate into the directory (should be inside reddit-extension-main) and click 'Select Folder'.</li>
+      <li>Browse Reddit!</li>
+    </ol>    
+    
+    <h4>Extension Installation Video</h4>
+    <div class="video-player-container mt-4 mb-4">
+
+      <video controls width="100%">
+          <source src="../assets/extension_install.mp4" type="video/mp4"></source>
+          Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <h4>Extension Uninstallation Video</h4>
+    <div class="video-player-container mt-4 mb-4">
+      <video controls width="100%">
+          <source src="../assets/extension_uninstall.mp4" type="video/mp4"></source>
+          Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <p>
+      In this study, we will be evaluating the effect that viewing comments on Reddit has on the end-user experience. Participating in this study consists of the following steps:
+      <li>Installing a Google Chrome browser extension</li>
+      <li>Browsing Reddit <u>while logged into</u> their Reddit account on Chrome on desktop</li>
+      <li>Uploading data collected by the browser extension</li>
+      <li>Answering a short survey based on the uploaded data</li>
+      <br>
+      We expect this to take approximately 25 minutes of active engagement (5 minutes for the extension installation, 20 minutes for the survey) with passive, regular usage of Reddit by participants over TK days. Participants will be compensated $12.25 for their time.
+    </p>
+    
+    <br>
+    <br>
+    
+  </div>
+
+  </div>
+</body>
+
+<script>
+  document.getElementById('consent-checkbox').addEventListener('change', function() {
+    document.getElementById('submit-btn').disabled = !this.checked;
+  });
+</script>
+
+</html>
+

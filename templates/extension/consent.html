@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>Study Instructions</title>
+    <style>
+        body{
+            background-color: rgb(237, 245, 248);
+        }
+        #logo{
+            width: 25%;
+            vertical-align: center;
+        }
+        #site-title {
+            width: 100vw;
+            height: 10vh;
+            background-color: white;
+            font-size: larger;
+        }
+        .inform-box {
+            margin: auto;
+            margin-top: 4%;
+            max-width: 900px;
+        }
+    </style>
+</head>
+
+<body class="d-flex justify-content-center">
+
+  <div class="flex-column text-center">
+      <div id="site-title" class="shadow-sm p-4 bg-white rounded">
+        <img src="{{ url_for('static', filename='download.png') }}" width="40px">
+            &nbsp; &nbsp; 
+            Measuring Perceived Harm on Reddit
+        </img>
+  </div>
+
+  <div class="d-flex flex-column align-items-center justify-content-center shadow p-5 bg-white rounded inform-box">
+
+    <a href="https://stanford.edu">
+      <img src="{{ url_for('static', filename='SUSig_Seal_Left.png') }}" id="logo">
+    </a>
+
+    <h1 class="text-center mt-4 mb-4">Study Overview and Participant Consent</h1>
+    <div class="text-start align-self-start mt-4">
+
+    
+    <h4>Data Usage</h4>
+    <p>The data collected from this study, including the uploaded Reddit data, survey responses, and demographic information, will be used for research purposes only. The data will be anonymized and aggregated, meaning that any personally identifiable information will be removed and the data will be combined with that of other participants. Although you must be logged in while using the extension, we will not collect any login information nor attempt to deanonymize participants.</p>
+    <p>The research findings may be published or presented in academic conferences, journals, or other scholarly outlets. However, no individual participant will be identified in any publications or presentations.</p>
+    
+    <h4>Data Security and Privacy</h4>
+    <p>The browser extension you install will only execute on relevant pages (Reddit domains) and tracks what posts and comments you are viewing. Survey responses will be about the Reddit browsing and demographic data. Any data we collect will be encrypted in transit via TLS and will be stored in secured servers that only research personnel will have access to, and it will be deleted after the study is complete. </p>
+    
+    <h4>Voluntary Participation and Right to Withdraw</h4>
+    <p>I understand that my participation in this study is voluntary, and I have the right to withdraw at any time without penalty or loss of benefits. If I choose to withdraw, I understand that any data I have provided up to that point will be retained and used for analysis, but my information will not be included in any future research outputs.</p>
+    
+    <h4>Contact Information</h4>
+    <p>If you have any questions or concerns regarding the study, you may contact the researcher leading this experiment at the following e-mail address: cathan@stanford.edu</p>
+    
+    <h4 style="margin-top: 8%;">Consent</h4>
+    <p>By checking the box below, I confirm that:</p>
+    <label for="consent-checkbox">
+      <input type="checkbox" id="consent-checkbox" required>
+      &nbsp;I have read and understood the information provided, and I voluntarily consent to participate in this study. I also acknowledge that I have the right to withdraw from the study at any time.
+    </label>
+    
+    <br>
+    <br>
+    
+    <form method="POST" action="/install">
+      <button type="submit" class="btn btn-success w-100" id="submit-btn" disabled>Submit</button>
+    </form>
+  </div>
+
+  </div>
+</body>
+
+<script>
+  document.getElementById('consent-checkbox').addEventListener('change', function() {
+    document.getElementById('submit-btn').disabled = !this.checked;
+  });
+</script>
+
+</html>
+

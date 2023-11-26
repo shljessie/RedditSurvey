@@ -37,9 +37,9 @@ PERSPECTIVE_API_KEY = os.getenv('PERSPECTIVE_API_KEY')
 BATCH_SIZE = 10 
 conn = sqlite3.connect('./data/database.db', check_same_thread=False)
 
-def create_user_folder(username):
-    folder_path = os.path.join("data", username)
-    upload_path = os.path.join("data", username,"upload_data")
+def create_user_folder(uuid):
+    folder_path = os.path.join("data", uuid)
+    upload_path = os.path.join("data", uuid,"upload_data")
 
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
@@ -49,8 +49,8 @@ def create_user_folder(username):
     else:
         print("User folder already exists.")
 
-def create_user_survey_folder(username):
-    folder_path = os.path.join("data", username,"survey_response")
+def create_user_survey_folder(uuid):
+    folder_path = os.path.join("data", uuid,"survey_response")
 
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
@@ -213,8 +213,8 @@ def generate_combinations(grouped):
         return generate_combinations(grouped)  # Call the function recursively to generate new combinations
 
 
-def saveToxicResults(subreddit,rating, reason, username):
-    folder_path = os.path.join("data", username, "survey_response")
+def saveToxicResults(subreddit,rating, reason, uuid):
+    folder_path = os.path.join("data", uuid, "survey_response")
     current_date = date.today().strftime("%Y-%m-%d")
     file_path = os.path.join(folder_path, f"{current_date}_toxicCat.csv")
 
@@ -234,8 +234,8 @@ def saveToxicResults(subreddit,rating, reason, username):
     print("Results saved successfully!")
 
 
-def saveResults(options,selected_option, username, surveyType=''):
-    folder_path = os.path.join("data", username, "survey_response")
+def saveResults(options,selected_option, uuid, surveyType=''):
+    folder_path = os.path.join("data", uuid, "survey_response")
     current_date = date.today().strftime("%Y-%m-%d")
     if surveyType == 'likert':
         file_path = os.path.join(folder_path, f"{current_date}_likert.csv")
@@ -262,9 +262,9 @@ def saveResults(options,selected_option, username, surveyType=''):
 
     print("Results saved successfully!")
 
-def saveSurveyResponseToCSV(response, username):
+def saveSurveyResponseToCSV(response, uuid):
     print('Saving Demographic Survey')
-    folder_path = os.path.join("data", username, "survey_response")
+    folder_path = os.path.join("data", uuid, "survey_response")
     file_path = os.path.join(folder_path, "demographic.csv")
     
     fieldnames = list(response.keys())
@@ -275,34 +275,42 @@ def saveSurveyResponseToCSV(response, username):
             writer.writeheader()
         writer.writerow(response)
 
+@app.route('/install', methods=['GET', 'POST'])
+def install():
+    return render_template('extension/install.html')
+
+@app.route('/consent', methods=['GET', 'POST'])
+def consent():
+    return render_template('extension/consent.html')
+
+
 @app.route('/', methods=['GET', 'POST'])
 def login():
     session.clear()
     if request.method == 'POST':
         uuid = request.form['uuid']
-        username = request.form.get('username', '') 
         error = None
 
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE uuid = ? AND username = ?", (uuid, username))
+        cursor.execute("SELECT * FROM users WHERE uuid = ?", uuid)
         user = cursor.fetchone()
 
         if user:
-            create_user_folder(username)
-            session['username'] = username
+            create_user_folder(uuid)
+            session['uuid'] = uuid
             print('here')
             return redirect('/inform')
         else:
-            error = "Invalid UUID or username. Please try again."
+            error = "Invalid Prolific ID. Please try again."
             return render_template('login.html', error=error)
 
     return render_template('login.html')
 
 @app.route('/inform', methods=['GET', 'POST'])
 def inform():
-    username = session.get('username')
-    print(username)
-    if username:
+    uuid = session.get('uuid')
+    print(uuid)
+    if uuid:
         return render_template('inform.html')
     else:
         return redirect('/')
@@ -311,8 +319,8 @@ def inform():
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
-    username = session.get('username')
-    if username:
+    uuid = session.get('uuid')
+    if uuid:
         if 'csv_file' not in request.files:
             error = 'No file uploaded.'
             return render_template('dashboard.html', error=error)
@@ -327,7 +335,7 @@ def dashboard():
             error = 'Invalid file format. Please upload a CSV file.'
             return render_template('dashboard.html', error=error)
 
-        upload_folder = os.path.join("data", username, "scraped_comments")
+        upload_folder = os.path.join("data", uuid, "scraped_comments")
         if not os.path.exists(upload_folder):
             os.makedirs(upload_folder)
 
@@ -406,9 +414,9 @@ def check_valid(most_recent_file):
 
 @app.route('/generate', methods=['GET', 'POST'])
 def generate_survey():
-    username = session.get('username')
-    if username:
-        upload_folder = os.path.join("data", username, "scraped_comments")
+    uuid = session.get('uuid')
+    if uuid:
+        upload_folder = os.path.join("data", uuid, "scraped_comments")
 
         most_recent_file = find_most_recent_file(upload_folder)
 
@@ -434,7 +442,7 @@ def generate_survey():
                 df['all'] = all_scores
 
                 # Save labeled comments
-                folder_path = os.path.join("data", username, "labeled_comments")
+                folder_path = os.path.join("data", uuid, "labeled_comments")
                 if not os.path.exists(folder_path):
                     os.makedirs(folder_path)
 
@@ -459,19 +467,19 @@ def not_enough():
 
 @app.route('/survey', methods=['GET', 'POST'])
 def genSurvey():
-    username = session.get('username')
-    if username:
+    uuid = session.get('uuid')
+    if uuid:
         click_counter = session.get('click_counter')
         if click_counter is None:
             click_counter = 1
         else:
             click_counter += 1
         session['click_counter'] = click_counter
-        username = session.get('username')
-        create_user_survey_folder(username)
+        uuid = session.get('uuid')
+        create_user_survey_folder(uuid)
 
         #call survey final data
-        labeled_data = os.path.join("data", username, "labeled_comments","labeled.csv")
+        labeled_data = os.path.join("data", uuid, "labeled_comments","labeled.csv")
         labeled_data = pd.read_csv(labeled_data)
 
         grouped = labeled_data.groupby(['seen', 'toxicity'])
@@ -482,7 +490,7 @@ def genSurvey():
         selected_option = request.form.get('option')
         option1_value = request.form.get('option1_value')
         option2_value = request.form.get('option2_value')
-        saveResults([option1_value,option2_value],selected_option, username)  
+        saveResults([option1_value,option2_value],selected_option, uuid)  
 
         if session['click_counter'] == 11:
             session['click_counter'] = None
@@ -496,8 +504,8 @@ def genSurvey():
         
 @app.route('/likertsurvey', methods=['GET','POST'])
 def likertSurvey():
-    username = session.get('username')
-    folder_path = os.path.join("data", username, "survey_response")
+    uuid = session.get('uuid')
+    folder_path = os.path.join("data", uuid, "survey_response")
     current_date = date.today().strftime("%Y-%m-%d")
     file_path = os.path.join(folder_path, f"{current_date}.csv")
 
@@ -512,7 +520,7 @@ def likertSurvey():
         except ValueError as e:
             continue
 
-    if username:
+    if uuid:
         click_counter = session.get('click_counter')
         if click_counter is None:
             click_counter = 1
@@ -523,7 +531,7 @@ def likertSurvey():
         selected_option = request.form.get('rating')
         comment_option = request.form.get('comment')
         if selected_option!=None: 
-            saveResults(comment_option,selected_option, username, 'likert')  
+            saveResults(comment_option,selected_option, uuid, 'likert')  
 
         if session['click_counter'] == 11:
             session['click_counter'] = None
@@ -537,8 +545,8 @@ def likertSurvey():
 
 @app.route('/toxiccatsurvey', methods=['GET','POST'])    
 def toxicCatSurvey():
-    username = session.get('username')
-    folder_path = os.path.join("data", username, "survey_response")
+    uuid = session.get('uuid')
+    folder_path = os.path.join("data", uuid, "survey_response")
     current_date = date.today().strftime("%Y-%m-%d")
     file_path = os.path.join(folder_path, f"{current_date}.csv")
 
@@ -553,7 +561,7 @@ def toxicCatSurvey():
         except ValueError as e:
             continue
 
-    if username:
+    if uuid:
         click_counter = session.get('click_counter')
         if click_counter is None:
             click_counter = 1
@@ -567,7 +575,7 @@ def toxicCatSurvey():
         
         if selected_toxic_categories:
             # Assuming saveResults function can handle the list of categories
-            saveResults(comment_option, selected_toxic_categories, username, 'toxicCat')  
+            saveResults(comment_option, selected_toxic_categories, uuid, 'toxicCat')  
 
         if session['click_counter'] == 11:
             session['click_counter'] = None
@@ -581,12 +589,12 @@ def toxicCatSurvey():
 
 @app.route('/subsurvey', methods=['GET','POST'])   
 def subSurvey():
-    username = session.get('username')
-    if not username:
+    uuid = session.get('uuid')
+    if not uuid:
         flash('You are not logged in. Please login and try again.', 'error')
         return redirect('/')
     
-    folder_path = os.path.join("data", username, "survey_response")
+    folder_path = os.path.join("data", uuid, "survey_response")
     current_date = date.today().strftime("%Y-%m-%d")
     file_path = os.path.join(folder_path, f"{current_date}.csv")
     data = pd.read_csv(file_path)
@@ -608,15 +616,15 @@ def subSurvey():
         for subreddit in subreddits:
             toxicity_rating = request.form.get(f'toxicity_{subreddit}')
             stay_reason = request.form.get(f'stay_reason_{subreddit}')
-            saveToxicResults(subreddit, toxicity_rating, stay_reason, username)
+            saveToxicResults(subreddit, toxicity_rating, stay_reason, uuid)
         return redirect('/subranksurvey')
 
     return render_template('subredditsurvey.html', data=list(subreddits))
 
 @app.route('/subranksurvey', methods=['GET','POST'])    
 def gensubRankSurvey():
-    username = session.get('username')
-    folder_path = os.path.join("data", username, "survey_response")
+    uuid = session.get('uuid')
+    folder_path = os.path.join("data", uuid, "survey_response")
     current_date = date.today().strftime("%Y-%m-%d")
     file_path = os.path.join(folder_path, f"{current_date}.csv")
     data = pd.read_csv(file_path)
@@ -634,11 +642,11 @@ def gensubRankSurvey():
             except ValueError as e:
                 print(f"Error in row {index}: {e}")
 
-    if username:
+    if uuid:
         if request.method == 'POST':
             for subreddit in subreddits:
                 toxicity_ranking = request.form.get(f'toxicity_{subreddit}')
-                saveResults(subreddit, toxicity_ranking, username,'subRank')
+                saveResults(subreddit, toxicity_ranking, uuid,'subRank')
             
             return redirect('/demosurvey')
 
@@ -670,8 +678,8 @@ def genDemoSurvey():
 @app.route('/demosubmit', methods=['GET','POST'])
 def demosubmit():
     print('Submitting DEMO Survey')
-    username = session.get('username')
-    if username:
+    uuid = session.get('uuid')
+    if uuid:
         # Get the submitted form data
         age = request.form.get('age')
         gender = request.form.get('gender')
@@ -704,7 +712,7 @@ def demosubmit():
             'SelectedOption': selected_option
         }
 
-        saveSurveyResponseToCSV(response, username)
+        saveSurveyResponseToCSV(response, uuid)
 
         return render_template('done.html')
     else:
