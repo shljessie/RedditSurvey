@@ -292,7 +292,7 @@ def login():
         error = None
 
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE uuid = ?", uuid)
+        cursor.execute("SELECT * FROM users WHERE uuid = ?", (uuid,))
         user = cursor.fetchone()
 
         if user:
