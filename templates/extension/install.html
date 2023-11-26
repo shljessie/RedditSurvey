@@ -60,7 +60,7 @@
     <div class="video-player-container mt-4 mb-4">
 
       <video controls width="100%">
-          <source src="../assets/extension_install.mp4" type="video/mp4"></source>
+          <source src="{{ url_for('static', filename='../assets/extension_install.mp4') }}" type="video/mp4">
           Your browser does not support the video tag.
       </video>
     </div>
@@ -68,7 +68,7 @@
     <h4>Extension Uninstallation Video</h4>
     <div class="video-player-container mt-4 mb-4">
       <video controls width="100%">
-          <source src="../assets/extension_uninstall.mp4" type="video/mp4"></source>
+          <source  src="{{ url_for('static', filename='../assets/extension_uninstall.mp4') }}" type="video/mp4"></source>
           Your browser does not support the video tag.
       </video>
     </div>
