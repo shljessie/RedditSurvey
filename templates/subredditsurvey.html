@@ -28,6 +28,15 @@
         }
     </style>
     <script>
+        function toggleTextArea(subreddit) {
+            var toxicitySelect = document.getElementById("toxicity_" + subreddit);
+            var textArea = document.getElementById("textarea_" + subreddit);
+            if (toxicitySelect.value === "highly_toxic" || toxicitySelect.value === "moderately_toxic") {
+                textArea.style.display = "block";
+            } else {
+                textArea.style.display = "none";
+            }
+        }
     </script>
 </head>
 <body class="d-flex justify-content-center">
@@ -49,7 +58,7 @@
             {% for subreddit in data %}
             <div>
                 <label for="toxicity_{{ subreddit }}">Rate the toxicity for {{ subreddit }}:</label>
-                <select name="toxicity_{{ subreddit }}" id="toxicity_{{ subreddit }}">
+                <select name="toxicity_{{ subreddit }}" id="toxicity_{{ subreddit }}"  onchange="toggleTextArea('{{ subreddit }}')">
                     <option value="not_toxic">Not Toxic</option>
                     <option value="slightly_toxic">Slightly Toxic</option>
                     <option value="moderately_toxic">Moderately Toxic</option>
@@ -60,7 +69,7 @@
 
                 <br/>
                 <p style="font-weight: 600;">If the subreddit is Highly or Extremely Toxic, why do you stay in this subreddit?</p>
-                <textarea name="stay_reason_{{ subreddit }}"class="form-control" id="exampleFormControlTextarea1" rows="4" cols="50" placeholder="Your answer here..."></textarea>
+                <textarea name="stay_reason_{{ subreddit }}" class="form-control" id="textarea_{{ subreddit }}" rows="4" cols="50" placeholder="Your answer here..." style="display: none;"></textarea>
                 
                 <hr>
             {% endfor %}
