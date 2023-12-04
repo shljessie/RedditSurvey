@@ -523,6 +523,8 @@ def likertSurvey():
 
     if uuid:
         click_counter = session.get('click_counter')
+        max_click_counter = min(10, len(valid_comments))
+        
         if click_counter is None:
             click_counter = 1
         else:
@@ -534,7 +536,7 @@ def likertSurvey():
         if selected_option!=None: 
             saveResults(comment_option,selected_option, uuid, 'likert')  
 
-        if session['click_counter'] == 11:
+        if session['click_counter'] == max_click_counter:
             session['click_counter'] = None
 
             return redirect('/toxiccatsurvey')

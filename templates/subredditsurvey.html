@@ -31,7 +31,7 @@
         function toggleTextArea(subreddit) {
             var toxicitySelect = document.getElementById("toxicity_" + subreddit);
             var textArea = document.getElementById("textarea_" + subreddit);
-            if (toxicitySelect.value === "highly_toxic" || toxicitySelect.value === "moderately_toxic") {
+            if (toxicitySelect.value === "highly_toxic" || toxicitySelect.value === "extremely_toxic") {
                 textArea.style.display = "block";
             } else {
                 textArea.style.display = "none";
