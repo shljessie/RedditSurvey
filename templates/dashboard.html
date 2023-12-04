@@ -101,13 +101,17 @@
             <h4 id="title" class="mt-2">Upload Scraped Reddit Comments CSV</h4>
 
                 <ol id="instructions" class="mt-4">
-                    <li>In your reddit extension, click the "Download to CSV"</li>
-                    <li>Check the location of your downloaded CSV file on your local computer (it will go to your Downloads folder)</li>
+                    <li>Click on your Reddit Extension, and in the Reddit extension press menu (3 dots) --> Options</li>
+                    <br/>
+                    <img src="{{ url_for('static', filename='extension.png') }}" width="400px">
+                    <li>Click "Export Database to CSV"</li>
+                    <br/>
+                    <img src="{{ url_for('static', filename='export.png') }}" width="600px">
+                    <li>Check the location of your downloaded CSV file on your local computer - <b>reddit_comment_history.csv</b> </li>
                     <li>Confirm that all the elements of the file look correct. <a href="https://drive.google.com/file/d/1rPGF6xxSDHmNQc1RAdwqK1w0voNx8rWL/view?usp=sharing"> A sample version is here</a></li>
                     <ul style="color:gray;">
-                        <li>Make sure you have the all the comments (for the entire period) you have viewed in that csv file.</li>
-                        <li>The survey will be generated with the most recent comment you have uploaded.</li>
-                        <li><i>If there are no comments on the CSV file please contact <a href = "mailto: catherinehan@cs.stanford.edu">redditHarm@cs.stanford.edu</a></i></li>
+                        <li><i>If there are missing values in the rows/columns on the CSV file please contact</li>
+                        <li><i>If there are no comments on the CSV file please contact <a href = "mailto: shlee@cs.stanford.edu">shlee@cs.stanford.edu</a></i></li>
                     </ul>
                     <li>Click on the "Choose File" button below</li>
                     <li>Once you upload the file, you will see a "Generate Survey" button. Click on it to start the survey.</li>
