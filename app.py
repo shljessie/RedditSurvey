@@ -511,12 +511,13 @@ def likertSurvey():
 
     selected_data = pd.read_csv(file_path)
     comment = None
+    valid_comments = []
 
     for _, row in selected_data.iterrows():
         try:
             if pd.notna(row["Selected Option"]):
                 comment = ast.literal_eval(row["Selected Option"])
-                break 
+                valid_comments.append(comment)
         except ValueError as e:
             continue
 
@@ -538,7 +539,7 @@ def likertSurvey():
 
             return redirect('/toxiccatsurvey')
 
-        return render_template('likertsurvey.html', data = comment, click_counter = click_counter )
+        return render_template('likertsurvey.html', data = valid_comments[click_counter], click_counter = click_counter )
     else:
         flash('You are not logged in. Please login and try again.', 'error')
         return redirect('/')
@@ -552,12 +553,13 @@ def toxicCatSurvey():
 
     selected_data = pd.read_csv(file_path)
     comment = None
+    valid_comments = []
 
     for _, row in selected_data.iterrows():
         try:
             if pd.notna(row["Selected Option"]):
                 comment = ast.literal_eval(row["Selected Option"])
-                break 
+                valid_comments.append(comment)
         except ValueError as e:
             continue
 
@@ -581,7 +583,7 @@ def toxicCatSurvey():
             session['click_counter'] = None
             return redirect('/subsurvey')
 
-        return render_template('toxicsurvey.html', data=comment, click_counter=click_counter)
+        return render_template('toxicsurvey.html', data=valid_comments[click_counter], click_counter=click_counter)
     else:
         flash('You are not logged in. Please login and try again.', 'error')
         return redirect('/')

@@ -20,20 +20,43 @@
         }
     </style>
     <script>
-      function validateForm() {
-        var selections = [];
-        var selects = document.getElementsByTagName('select');
-        for (var i = 0; i < selects.length; i++) {
-            var selValue = selects[i].value;
-            if (selections.includes(selValue)) {
-                alert('Duplicate ranks are not allowed.');
-                return false;
-            } else {
-                selections.push(selValue);
+        function validateForm() {
+            var selections = [];
+            var selects = document.getElementsByTagName('select');
+            for (var i = 0; i < selects.length; i++) {
+                var selValue = selects[i].value;
+                if (selections.includes(selValue)) {
+                    alert('Duplicate ranks are not allowed.');
+                    return false;
+                } else {
+                    selections.push(selValue);
+                }
             }
+            // Ensure all selects have a value and no duplicates are present
+            return allSelectsChosen();
         }
-        return true;
+
+
+        // New function to check if all selects have a value
+        function allSelectsChosen() {
+            var selects = document.getElementsByTagName('select');
+            for (var i = 0; i < selects.length; i++) {
+                if (selects[i].value === "") {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        window.onload = function() {
+        document.getElementById("nextButton").disabled = true;
       }
+
+      function updateButtonStatus() {
+            var allChosen = allSelectsChosen();
+            var noDuplicates = validateForm();
+            document.getElementById("nextButton").disabled = !(allChosen && noDuplicates);
+        }
     </script>
 </head>
 <body class="d-flex justify-content-center">
@@ -56,7 +79,7 @@
               {% for subreddit in data %}
                   <h5>{{ subreddit }}</h5>
                 
-                  <select name="toxicity_{{ subreddit }}">
+                  <select id="select{{ subreddit }}" name="toxicity_{{ subreddit }}" onchange="updateButtonStatus()">
                     {% for i in range(1, num_subreddits+1) %}
                         <option value="{{ i }}">{{ i }}</option>
                     {% endfor %}
