@@ -34,6 +34,10 @@
         input[type=radio]{
             transform:scale(1.5);
         }
+        .comment{
+            padding:15px;
+            box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+        }
     </style>
     <script>
         function enableNextButton() {
@@ -47,7 +51,7 @@
         }
     </script>
 </head>
-<body class="d-flex justify-content-center">
+<body class="d-flex justify-content-start">
 
     <div class="flex-column text-center">
         <div id="site-title" class="shadow-sm p-4 bg-white rounded">
@@ -60,24 +64,27 @@
     <div class="d-flex flex-column align-items-center justify-content-center shadow p-5 bg-white rounded inform-box">
     <!-- <h5 style="margin-bottom: 5%;">LIKERT Questions</h5> -->
 
-    <form method="POST" action="/likertsurvey">
+    <form method="POST" action="/likertsurvey"  text-align="start">
         {% if click_counter %}
         <p style="color:gray;">Question {{click_counter}}</p>
         {% endif %}
 
-        <p style="font-size:small;">To what extent do you agree with the following statement: </p>
-        <h4  style="font-size:large;"><br/> The comment had a significant impact on me.</h4>
-        <p style="margin-bottom: 50px;">(Impact: Severe Toxicity, Insult, Profanity, Identity attack, Threat, Sexually explicit)</p>
+
+
+        <p style="text-align: start;">To what extent do you agree with the following statement:<i style="font-size: smaller;"> <br/>(Impact: Severe Toxicity, Insult, Profanity, Identity attack, Threat, Sexually explicit)</i> </p>
+        <p  style="font-size:large; color:blue; font-weight: 600;">" The comment had a significant impact on me. " </p>
 
         
         <form method="POST" action="/likertsurvey">
 
+        <div class="comment">
           {% if data %}
           <p style="color: gray; font-size: smaller; margin-bottom: 0; text-align: start;">{{data.post_info}}</p>
           <p style="color:black; text-align: start;" name="comment">{{data.comment}}</p>
           <p style="color: gray; text-align: end;  margin-top: 5px;">by {{data.comment_author}}</p>
           <input type="hidden" name="comment" value="{{ data.comment }}">
           {% endif %}
+        </div>
 
           <div class="likertOptions">
             <label class="radio"><input class="mb-2" type="radio" name="rating" value="1" onclick="enableNextButton();"> Strongly Disagree</label><br>
