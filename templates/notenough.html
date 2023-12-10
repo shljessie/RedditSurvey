@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>Study Instructions</title>
+    <style>
+        body{
+            background-color: rgb(237, 245, 248);
+        }
+        #logo{
+            width: 25%;
+            vertical-align: center;
+        }
+        #site-title {
+            width: 100vw;
+            height: 10vh;
+            background-color: white;
+            font-size: larger;
+        }
+        .inform-box {
+            margin: auto;
+            margin-top: 4%;
+            max-width: 900px;
+        }
+    </style>
+</head>
+
+<body class="d-flex justify-content-center">
+
+  <div class="flex-column text-center">
+      <div id="site-title" class="shadow-sm p-4 bg-white rounded">
+        <img src="{{ url_for('static', filename='download.png') }}" width="40px">
+            &nbsp; &nbsp; 
+            Measuring Perceived Harm on Reddit
+        </img>
+  </div>
+
+  <div class="d-flex flex-column align-items-center justify-content-center shadow p-5 bg-white rounded inform-box">
+
+    <a href="https://stanford.edu">
+      <img src="{{ url_for('static', filename='SUSig_Seal_Left.png') }}" id="logo">
+    </a>
+
+    <h1 class="text-center mt-4 mb-4">Not Enough Data</h1>
+    <div class="text-start align-self-start mt-4">
+
+    <p>
+      You do not have enough data to participate in this survey. We require that you have at least 5 toxic comments in your dataset to participate in this survey.
+
+      <br/>
+      <br/>
+      {% if count is not none %}
+      Currently, you have {{ count }} toxic comments.
+      {% endif %}
+    </p>
+    
+    
+    <br>
+    <br>
+
+  </div>
+
+  </div>
+</body>
+
+</html>
+

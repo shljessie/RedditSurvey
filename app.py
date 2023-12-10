@@ -174,11 +174,12 @@ def process_comments(most_recent_file):
 
 
 def generate_combinations(grouped):
+
+    # Original list of tuples
     combinations = [(False, False), (False, True), (True, False), (True, True)]
 
-    random_combinations = random.sample(combinations, k=2)
-
-    # print('RAND COMBO: ', random_combinations)
+    # Ensuring one of the selected tuples has the first value as True
+    random_combinations = [random.choice([t for t in combinations if t[0]]), random.choice(combinations)]
 
     groups = []
     for combination in random_combinations:
@@ -199,18 +200,13 @@ def generate_combinations(grouped):
                 }
                 groups.append(comment_data)
             else:
-                # redo the random_combinations
-                # print("Group is None. Redoing random combinations.")
-                return generate_combinations(grouped)  # Call the function recursively to generate new combinations
-        else:
-            # print("Combination not found in groups. Skipping...")
+                return generate_combinations(grouped)
             pass
     
     if len(groups) >= 2:
         return groups[0], groups[1]
     else:
-        # print("Not enough elements in groups. Redoing random combinations.")
-        return generate_combinations(grouped)  # Call the function recursively to generate new combinations
+        return generate_combinations(grouped) 
 
 
 def saveToxicResults(subreddit,rating, reason, uuid):
@@ -404,8 +400,6 @@ def check_valid(most_recent_file):
 
     if valid_urls == []:
         print('You do not have enough comments to do this exercise. Please browse more comments and return')
-        not_enough
-        redirect('/notenough')
         render_template('not_enough.html')
         return False
     else: 
@@ -483,7 +477,15 @@ def genSurvey():
         labeled_data = pd.read_csv(labeled_data)
 
         grouped = labeled_data.groupby(['seen', 'toxicity'])
-        option1, option2= generate_combinations(grouped)
+        # Original list of tuples
+        toxic_true = len(labeled_data[labeled_data['toxicity'] == True ])
+        print( 'COUNT', toxic_true)
+
+        if toxic_true <5:
+            print('You dont have enough data for this survey.')
+            return render_template('notenough.html', count = toxic_true)
+        else:
+            option1, option2= generate_combinations(grouped)
 
         # Call your function to save the results        
         options= [option1,option2]
