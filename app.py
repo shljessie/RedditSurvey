@@ -201,7 +201,7 @@ def generate_combinations(grouped):
                 return generate_combinations(grouped)
             pass
     
-    if len(groups) >= 2:
+    if len(groups) >= 2 and groups[0] != groups[1]:
         return groups[0], groups[1]
     else:
         return generate_combinations(grouped) 
