@@ -517,7 +517,8 @@ def likertSurvey():
         try:
             if pd.notna(row["Selected Option"]):
                 comment = ast.literal_eval(row["Selected Option"])
-                valid_comments.append(comment)
+                if comment not in  valid_comments:
+                    valid_comments.append(comment)
         except ValueError as e:
             continue
 
@@ -563,7 +564,8 @@ def toxicCatSurvey():
         try:
             if pd.notna(row["Selected Option"]):
                 comment = ast.literal_eval(row["Selected Option"])
-                valid_comments.append(comment)
+                if comment not in  valid_comments:
+                    valid_comments.append(comment)
         except ValueError as e:
             continue
 
