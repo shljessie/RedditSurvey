@@ -177,8 +177,6 @@ def generate_combinations(grouped):
 
     # Original list of tuples
     combinations = [(False, False), (False, True), (True, False), (True, True)]
-
-    # Ensuring one of the selected tuples has the first value as True
     random_combinations = [random.choice([t for t in combinations if t[0]]), random.choice(combinations)]
 
     groups = []
@@ -523,6 +521,8 @@ def likertSurvey():
         except ValueError as e:
             continue
 
+
+    print('valid comments', valid_comments)
     if uuid:
         click_counter = session.get('click_counter')
         max_click_counter = min(10, len(valid_comments))
@@ -569,6 +569,7 @@ def toxicCatSurvey():
 
     if uuid:
         click_counter = session.get('click_counter')
+        max_click_counter = min(10, len(valid_comments))
         if click_counter is None:
             click_counter = 1
         else:
@@ -583,7 +584,7 @@ def toxicCatSurvey():
             # Assuming saveResults function can handle the list of categories
             saveResults(comment_option, selected_toxic_categories, uuid, 'toxicCat')  
 
-        if session['click_counter'] == 11:
+        if session['click_counter'] == max_click_counter:
             session['click_counter'] = None
             return redirect('/subsurvey')
 
